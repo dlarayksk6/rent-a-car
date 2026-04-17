@@ -1,0 +1,395 @@
+﻿@model List<RentACar.DTOs.Blog.BlogListDto>
+@{
+    Layout = "~/Views/Shared/_FrontendLayout.cshtml";
+    ViewBag.Title = "Ana Sayfa";
+    var about = ViewBag.About as RentACar.Entities.AboutContent;
+}
+
+<div class="no-bottom no-top" id="content">
+    <div id="top"></div>
+
+
+    <section id="section-hero" aria-label="section" class="jarallax text-light full-height vertical-center">
+        <img src="/quarter/images/background/1.jpg" class="jarallax-img" alt="">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <div class="spacer-double"></div>
+                    <h1>@(about?.HeroTitle ?? "Konforlu Araçlarla Güvenli Yolculuk")</h1>
+                    <p class="lead">@(about?.HeroSubText ?? "İster iş, ister tatil… Modern ve bakımlı araç filomuzla yolculuğunuzun keyfini çıkarın.")</p>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="box-icon s2 p-small mb20">
+                                <i class="fa bg-color fa-trophy"></i>
+                                <div class="d-inner">
+                                    <h4 class="id-color">@(about?.HeroFeature1Title ?? "Birinci Sınıf Hizmet")</h4>
+                                    @(about?.HeroFeature1Text ?? "Profesyonel hizmet, kaliteli araçlar ve hızlı teslimat.")
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="box-icon s2 p-small mb20">
+                                <i class="fa bg-color fa-road"></i>
+                                <div class="d-inner">
+                                    <h4 class="id-color">@(about?.HeroFeature2Title ?? "7/24 Yol Yardım")</h4>
+                                    @(about?.HeroFeature2Text ?? "Olası durumlarda her zaman yanınızdayız.")
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <a class="btn-main" href="/Site/Cars">Araçları İncele</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="spacer-double"></div>
+
+    <section id="section-brands">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 offset-lg-2 text-center">
+                    <h2>Filomuzdaki Markalar</h2>
+                    <p>Geniş araç filomuzdaki tüm markalar ile güvenli ve konforlu yolculuk.</p>
+                    <div class="spacer-20"></div>
+                </div>
+            </div>
+            <div class="brand-slider-wrapper">
+                <div class="brand-slider-track" id="brandTrack">
+                    @foreach (var brand in (ViewBag.Brands as List<RentACar.Entities.Brand>) ?? new List<RentACar.Entities.Brand>())
+                    {
+                        <a href="/Site/Cars?brand=@Uri.EscapeDataString(brand.Name)" class="brand-slide-item">
+                            @if (!string.IsNullOrEmpty(brand.LogoUrl))
+                            {
+                                <img src="@brand.LogoUrl" alt="@brand.Name" />
+                            }
+                            else
+                            {
+                                <span>@brand.Name</span>
+                            }
+                        </a>
+                    }
+                    @* Sonsuz döngü için kopyala *@
+                    @foreach (var brand in (ViewBag.Brands as List<RentACar.Entities.Brand>) ?? new List<RentACar.Entities.Brand>())
+                    {
+                        <a href="/Site/Cars?brand=@Uri.EscapeDataString(brand.Name)" class="brand-slide-item" aria-hidden="true">
+                            @if (!string.IsNullOrEmpty(brand.LogoUrl))
+                            {
+                                <img src="@brand.LogoUrl" alt="@brand.Name" />
+                            }
+                            else
+                            {
+                                <span>@brand.Name</span>
+                            }
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </section>
+    <section id="section-hero-2" aria-label="section" class="jarallax text-light" style="background-color: #404044; min-height: 400px;">
+        <img src="/quarter/images/background/15.jpg" class="jarallax-img" alt="">
+        <div class="container">
+            <div class="row">
+                <div class="spacer-double"></div>
+                <div class="col-lg-12 text-center">
+                    <h2 class="text-light">Hemen <span class="id-color">Araç Bul</span></h2>
+                    <p class="lead text-light">Alış ve bırakış yerlerini seç, yolculuğuna başla.</p>
+                    <div class="spacer-single"></div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="spacer-single sm-hide"></div>
+                    <div class="p-4 rounded-3 shadow-soft" style="background-color: rgba(242,242,242,0.9);">
+                        <form method="get" action="/Site/Cars">
+                            <div class="row align-items-end">
+
+                                <div class="col-lg-2 col-md-6 mb-3">
+                                    <h6 style="color:#333; margin-bottom:6px;">Alış Yeri</h6>
+                                    <select name="pickupLocation" class="form-control" style="background:#fff; color:#333;">
+                                        <option value="">-- Seçin --</option>
+                                        @foreach (var loc in (ViewBag.PickupLocations as List<RentACar.Entities.Location>) ?? new List<RentACar.Entities.Location>())
+                                        {
+                                            <option value="@loc.Name">@loc.Name</option>
+                                        }
+                                    </select>
+                                </div>
+
+                            
+                                <div class="col-lg-2 col-md-6 mb-3">
+                                    <h6 style="color:#333; margin-bottom:6px;">Bırakış Yeri</h6>
+                                    <select name="dropoffLocation" class="form-control" style="background:#fff; color:#333;">
+                                        <option value="">-- Seçin --</option>
+                                        @foreach (var loc in (ViewBag.DropoffLocations as List<RentACar.Entities.Location>) ?? new List<RentACar.Entities.Location>())
+                                        {
+                                            <option value="@loc.Name">@loc.Name</option>
+                                        }
+                                    </select>
+                                </div>
+
+                               
+                                <div class="col-lg-2 col-md-6 mb-3">
+                                    <h6 style="color:#333; margin-bottom:6px;">Alış Tarihi</h6>
+                                    <input type="date" name="startDate" id="heroStartDate" class="form-control"
+                                           min="@DateTime.Now.ToString("yyyy-MM-dd")"
+                                           style="background:#fff; color:#333;" />
+                                </div>
+                                <div class="col-lg-1 col-md-6 mb-3">
+                                    <h6 style="color:#333; margin-bottom:6px;">Saat</h6>
+                                    <select name="pickupTime" class="form-control" style="background:#fff; color:#333;">
+                                        @for (int h = 0; h <= 23; h++)
+                                        {
+                                            <option value="@(h.ToString("D2")):00"
+                                                    selected="@(h == 10 ? "selected" : null)">
+                                                @(h.ToString("D2")):00
+                                            </option>
+                                        }
+                                    </select>
+                                </div>
+
+                                <div class="col-lg-2 col-md-6 mb-3">
+                                    <h6 style="color:#333; margin-bottom:6px;">Bırakış Tarihi</h6>
+                                    <input type="date" name="endDate" id="heroEndDate" class="form-control"
+                                           min="@DateTime.Now.ToString("yyyy-MM-dd")"
+                                           style="background:#fff; color:#333;" />
+                                </div>
+                                <div class="col-lg-1 col-md-6 mb-3">
+                                    <h6 style="color:#333; margin-bottom:6px;">Saat</h6>
+                                    <select name="dropoffTime" class="form-control" style="background:#fff; color:#333;">
+                                        @for (int h = 0; h <= 23; h++)
+                                        {
+                                            <option value="@(h.ToString("D2")):00"
+                                                    selected="@(h == 18 ? "selected" : null)">
+                                                @(h.ToString("D2")):00
+                                            </option>
+                                        }
+                                    </select>
+                                </div>
+
+                               
+                                <div class="col-lg-1 col-md-6 mb-3">
+                                    <h6 style="color:#333; margin-bottom:6px;">Sınıf</h6>
+                                    <select name="category" class="form-control" style="background:#fff; color:#333;">
+                                        <option value="">Tümü</option>
+                                        <option value="A">A</option>
+                                        <option value="B">B</option>
+                                        <option value="C">C</option>
+                                        <option value="D">D</option>
+                                        <option value="E">E</option>
+                                    </select>
+                                </div>
+                                <div class="col-lg-1 col-md-6 mb-3">
+                                    <h6 style="color:transparent; margin-bottom:6px;">.</h6>
+                                    <button type="submit" class="btn-main btn-fullwidth">
+                                        <i class="fa fa-search"></i> Ara
+                                    </button>
+                                </div>
+
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="spacer-double"></div>
+        </div>
+    </section>
+  
+
+  
+    <section aria-label="section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 offset-lg-3 text-center">
+                    <h2>Özelliklerimiz</h2>
+                    <p>Konfor, güvenlik ve kişiselleştirme dünyasını keşfedin.</p>
+                    <div class="spacer-20"></div>
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-lg-3">
+                    <div class="box-icon s2 p-small mb20 wow fadeInRight" data-wow-delay=".5s">
+                        <i class="fa bg-color fa-trophy"></i>
+                        <div class="d-inner">
+                            <h4>@(about?.Feature1Title ?? "Birinci Sınıf Hizmetler")</h4>
+                            @(about?.Feature1Text ?? "Lüksün olağanüstü bakımla buluştuğu hizmet.")
+                        </div>
+                    </div>
+                    <div class="box-icon s2 p-small mb20 wow fadeInRight" data-wow-delay=".75s">
+                        <i class="fa bg-color fa-road"></i>
+                        <div class="d-inner">
+                            <h4>@(about?.Feature2Title ?? "7/24 Yol Yardımı")</h4>
+                            @(about?.Feature2Text ?? "En çok ihtiyacınız olduğunda güvenilir destek.")
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <img src="/quarter/images/misc/car.png" alt="Araba Görseli" class="img-fluid wow fadeInUp">
+                </div>
+                <div class="col-lg-3">
+                    <div class="box-icon s2 d-invert p-small mb20 wow fadeInLeft" data-wow-delay="1s">
+                        <i class="fa bg-color fa-tag"></i>
+                        <div class="d-inner">
+                            <h4>@(about?.Feature3Title ?? "Minimum Maliyetle Kalite")</h4>
+                            @(about?.Feature3Text ?? "Maksimum değer için maliyetleri en aza indirirken mükemmellik.")
+                        </div>
+                    </div>
+                    <div class="box-icon s2 d-invert p-small mb20 wow fadeInLeft" data-wow-delay="1.25s">
+                        <i class="fa bg-color fa-map-pin"></i>
+                        <div class="d-inner">
+                            <h4>@(about?.Feature4Title ?? "Ücretsiz Alış & Bırakış")</h4>
+                            @(about?.Feature4Text ?? "Ücretsiz araç teslim alma ve bırakma hizmetleri.")
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <section class="text-light jarallax">
+        <img src="/quarter/images/background/2.jpg" class="jarallax-img" alt="Arka Plan Görseli">
+        <div class="container">
+            <div class="row g-5">
+                <div class="col-lg-6 wow fadeInRight">
+                    <h2>@(about?.BannerTitle ?? "Müşterilerimize her durum için geniş bir yelpazede araçlar sunuyoruz.")</h2>
+                </div>
+                <div class="col-lg-6 wow fadeInLeft">
+                    @(about?.BannerText ?? "")
+                </div>
+            </div>
+            <div class="spacer-double"></div>
+            <div class="row text-center">
+                <div class="col-md-3 col-sm-6 mb-sm-30">
+                    <div class="de_count transparent text-light wow fadeInUp">
+                        <h3 class="timer" data-to="@(about?.CompletedOrders ?? 0)" data-speed="3000">0</h3>
+                        Tamamlanmış Sipariş
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 mb-sm-30">
+                    <div class="de_count transparent text-light wow fadeInUp">
+                        <h3 class="timer" data-to="@(about?.HappyCustomers ?? 0)" data-speed="3000">0</h3>
+                        Mutlu Müşteri
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 mb-sm-30">
+                    <div class="de_count transparent text-light wow fadeInUp">
+                        <h3 class="timer" data-to="@(about?.CarFleet ?? 0)" data-speed="3000">0</h3>
+                        Araç Filosu
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 mb-sm-30">
+                    <div class="de_count transparent text-light wow fadeInUp">
+                        <h3 class="timer" data-to="@(about?.YearsExperience ?? 0)" data-speed="3000">0</h3>
+                        Yıllık Deneyim
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+   
+    <section id="section-news">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 offset-lg-3 text-center">
+                    <h2>Son Blog Yazıları</h2>
+                    <p>En güncel haberleri, duyuruları ve içeriklerimizi keşfedin.</p>
+                    <div class="spacer-20"></div>
+                </div>
+                @foreach (var blog in Model)
+                {
+                    <div class="col-lg-4 mb10">
+                        <div class="bloglist s2 item">
+                            <div class="post-content">
+                                <div class="post-image">
+                                    <div class="date-box">
+                                        <div class="m">@blog.CreatedAt.ToString("dd")</div>
+                                        <div class="d">@blog.CreatedAt.ToString("MMM").ToUpper()</div>
+                                    </div>
+                                    <img alt="@blog.Title" src="@blog.ImageUrl" class="lazy"
+                                         style="height:230px; object-fit:cover; width:100%;">
+                                </div>
+                                <div class="post-text">
+                                    <h4>
+                                        <a href="/Site/BlogDetails/@blog.BlogPostId">@blog.Title<span></span></a>
+                                    </h4>
+                                    <p>@(blog.Content.Length > 120 ? blog.Content.Substring(0, 120) + "..." : blog.Content)</p>
+                                    <a class="btn-main" href="/Site/BlogDetails/@blog.BlogPostId">Devamını Oku</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+</div>
+<style>
+    #section-brands {
+        padding: 60px 0;
+        border-top: 1px solid #eee;
+        background: #fff;
+        overflow: hidden;
+    }
+
+    .brand-slider-wrapper {
+        overflow: hidden;
+        width: 100%;
+        position: relative;
+    }
+
+    .brand-slider-track {
+        display: flex;
+        align-items: center;
+        gap: 60px;
+        width: max-content;
+        animation: brandScroll 20s linear infinite;
+    }
+
+        .brand-slider-track:hover {
+            animation-play-state: paused;
+        }
+
+    .brand-slide-item {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 140px;
+        height: 80px;
+        flex-shrink: 0;
+        text-decoration: none;
+    }
+
+        .brand-slide-item img {
+            max-width: 130px;
+            max-height: 60px;
+            object-fit: contain;
+            filter: grayscale(30%);
+            opacity: 0.85;
+            transition: all 0.3s ease;
+        }
+
+        .brand-slide-item:hover img {
+            filter: grayscale(0%);
+            opacity: 1;
+            transform: scale(1.08);
+        }
+
+        .brand-slide-item span {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+    @@keyframes brandScroll {
+        0% {
+            transform: translateX(0);
+        }
+
+        100% {
+            transform: translateX(-50%);
+        }
+    }
+</style>

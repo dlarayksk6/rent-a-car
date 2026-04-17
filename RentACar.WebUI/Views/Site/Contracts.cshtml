@@ -1,0 +1,180 @@
+﻿@model List<RentACar.Entities.ContractDocument>
+@{
+    Layout = "~/Views/Shared/_FrontendLayout.cshtml";
+    ViewBag.Title = "Sözleşmeler";
+}
+
+<div class="no-bottom no-top" id="content">
+    <div id="top"></div>
+
+    <section id="subheader" class="jarallax text-light">
+        <img src="/quarter/images/background/subheader.jpg" class="jarallax-img" alt="">
+        <div class="center-y relative text-center">
+            <div class="container">
+                <h1>Sözleşmeler</h1>
+                <p>Kiralama koşulları ve belgeler.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="pt-5 pb-5">
+        <div class="container">
+
+            @if (!Model.Any())
+            {
+                <div class="text-center" style="padding:60px; color:#aaa;">
+                    <i class="fa fa-file-text-o" style="font-size:60px;"></i>
+                    <h4 style="margin-top:15px;">Henüz sözleşme eklenmemiş.</h4>
+                </div>
+            }
+            else
+            {
+                @foreach (var contract in Model)
+                {
+                    <div class="contract-block">
+
+                       
+                        <div class="contract-header" onclick="toggleContract('@contract.ContractId')">
+                            <div>
+                                <i class="fa fa-file-text-o"></i>
+                                <span>@contract.Title</span>
+                            </div>
+                            <i class="fa fa-chevron-down contract-chevron" id="chevron-@contract.ContractId"></i>
+                        </div>
+
+                      
+                        <div class="contract-content" id="contract-@contract.ContractId">
+
+                            @if (!string.IsNullOrEmpty(contract.Description))
+                            {
+                                <div class="contract-description">
+                                    <i class="fa fa-info-circle"></i> @contract.Description
+                                </div>
+                            }
+
+                            @if (!string.IsNullOrEmpty(contract.PdfUrl))
+                            {
+                                <div style="margin-bottom:20px;">
+                                    <a href="@contract.PdfUrl" target="_blank" class="btn-pdf">
+                                        <i class="fa fa-file-pdf-o"></i> PDF Olarak İndir / Görüntüle
+                                    </a>
+                                </div>
+                            }
+
+                            @if (!string.IsNullOrEmpty(contract.ContentText))
+                            {
+                                <div class="contract-text">
+                                    @Html.Raw(contract.ContentText.Replace("\n", "<br/>"))
+                                </div>
+                            }
+
+                        </div>
+                    </div>
+                }
+            }
+
+        </div>
+    </section>
+</div>
+
+<style>
+    .contract-block {
+        border: 1px solid #e8e8e8;
+        border-radius: 12px;
+        margin-bottom: 16px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .contract-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 18px 24px;
+        background: #fff;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 16px;
+        color: #1a1a2e;
+        transition: background 0.2s;
+    }
+
+        .contract-header:hover {
+            background: #fafafa;
+        }
+
+        .contract-header i.fa-file-text-o {
+            color: #e74c3c;
+            margin-right: 10px;
+            font-size: 18px;
+        }
+
+    .contract-chevron {
+        font-size: 13px;
+        color: #aaa;
+        transition: transform 0.3s;
+    }
+
+        .contract-chevron.open {
+            transform: rotate(180deg);
+        }
+
+    .contract-content {
+        display: none;
+        padding: 24px;
+        border-top: 1px solid #f0f0f0;
+        background: #fafafa;
+    }
+
+    .contract-description {
+        background: #eaf6ff;
+        border-left: 4px solid #3498db;
+        padding: 12px 16px;
+        border-radius: 6px;
+        color: #2980b9;
+        margin-bottom: 20px;
+        font-size: 14px;
+    }
+
+    .btn-pdf {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #e74c3c;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 600;
+        transition: background 0.2s;
+    }
+
+        .btn-pdf:hover {
+            background: #c0392b;
+            color: white;
+            text-decoration: none;
+        }
+
+    .contract-text {
+        background: #fff;
+        border: 1px solid #eee;
+        border-radius: 8px;
+        padding: 20px 24px;
+        color: #444;
+        font-size: 14px;
+        line-height: 1.8;
+        white-space: pre-wrap;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        function toggleContract(id) {
+            var content = $('#contract-' + id);
+            var chevron = $('#chevron-' + id);
+            content.slideToggle(200);
+            chevron.toggleClass('open');
+        }
+    </script>
+}

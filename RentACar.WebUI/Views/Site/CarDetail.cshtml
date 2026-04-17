@@ -1,0 +1,234 @@
+﻿@model RentACar.DTOs.Car.CarListDto
+@{
+    Layout = "~/Views/Shared/_FrontendLayout.cshtml";
+    ViewBag.Title = $"{Model.Brand} {Model.Model}";
+}
+
+<div class="no-bottom no-top zebra" id="content">
+    <div id="top"></div>
+
+    <section id="subheader" class="jarallax text-light">
+        <img src="/quarter/images/background/subheader.jpg" class="jarallax-img" alt="">
+        <div class="center-y relative text-center">
+            <div class="container">
+                <h1>@Model.Brand @Model.Model</h1>
+            </div>
+        </div>
+    </section>
+
+    <section id="section-car-details">
+        <div class="container">
+            <div class="row g-5">
+
+                <div class="col-lg-6">
+                    <div id="slider-carousel" class="owl-carousel">
+                        <div class="item">
+                            <img src="@(string.IsNullOrEmpty(Model.ImageUrl) ? "/quarter/images/cars/default.jpg" : Model.ImageUrl)" alt="@Model.Brand" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3">
+                    <h3>@Model.Brand @Model.Model</h3>
+                    <p>@Model.Description</p>
+
+                    <div class="spacer-10"></div>
+
+                    <h4>Teknik Özellikler</h4>
+                    <div class="de-spec">
+                        <div class="d-row">
+                            <span class="d-title">Kategori</span>
+                            <span class="d-value">@Model.Category Sınıfı</span>
+                        </div>
+                        @if (!string.IsNullOrEmpty(Model.BodyType))
+                        {
+                            <div class="d-row">
+                                <span class="d-title">Kasa</span>
+                                <span class="d-value">@Model.BodyType</span>
+                            </div>
+                        }
+                        <div class="d-row">
+                            <span class="d-title">Koltuk</span>
+                            <span class="d-value">@Model.Seats</span>
+                        </div>
+                        @if (Model.DoorCount.HasValue)
+                        {
+                            <div class="d-row">
+                                <span class="d-title">Kapı</span>
+                                <span class="d-value">@Model.DoorCount</span>
+                            </div>
+                        }
+                        <div class="d-row">
+                            <span class="d-title">Yakıt</span>
+                            <span class="d-value">@Model.FuelType</span>
+                        </div>
+                        <div class="d-row">
+                            <span class="d-title">Vites</span>
+                            <span class="d-value">@Model.Transmission</span>
+                        </div>
+                        @if (!string.IsNullOrEmpty(Model.DriveType))
+                        {
+                            <div class="d-row">
+                                <span class="d-title">Çekiş</span>
+                                <span class="d-value">@Model.DriveType</span>
+                            </div>
+                        }
+                        @if (Model.EngineCC.HasValue)
+                        {
+                            <div class="d-row">
+                                <span class="d-title">Motor</span>
+                                <span class="d-value">@Model.EngineCC cc</span>
+                            </div>
+                        }
+                        @if (Model.HorsePower.HasValue)
+                        {
+                            <div class="d-row">
+                                <span class="d-title">Güç</span>
+                                <span class="d-value">@Model.HorsePower HP</span>
+                            </div>
+                        }
+                        @if (Model.LuggageCapacity.HasValue)
+                        {
+                            <div class="d-row">
+                                <span class="d-title">Bagaj</span>
+                                <span class="d-value">@Model.LuggageCapacity L</span>
+                            </div>
+                        }
+                        <div class="d-row">
+                            <span class="d-title">Renk</span>
+                            <span class="d-value">@Model.Color</span>
+                        </div>
+                        <div class="d-row">
+                            <span class="d-title">Model Yılı</span>
+                            <span class="d-value">@Model.Year</span>
+                        </div>
+                    </div>
+
+                    <div class="spacer-single"></div>
+
+                    <h4>Kiralama Koşulları</h4>
+                    <div class="de-spec">
+                        <div class="d-row">
+                            <span class="d-title">Min. Yaş</span>
+                            <span class="d-value">@Model.MinAge</span>
+                        </div>
+                        @if (Model.MaxDriverAge.HasValue)
+                        {
+                            <div class="d-row">
+                                <span class="d-title">Max. Yaş</span>
+                                <span class="d-value">@Model.MaxDriverAge</span>
+                            </div>
+                        }
+                        <div class="d-row">
+                            <span class="d-title">Min. Ehliyet</span>
+                            <span class="d-value">@Model.MinDriverLicenseYear yıl</span>
+                        </div>
+                        @if (Model.MileageLimit.HasValue)
+                        {
+                            <div class="d-row">
+                                <span class="d-title">KM Limiti</span>
+                                <span class="d-value">@Model.MileageLimit km/gün</span>
+                            </div>
+                        }
+                        @if (Model.DepositAmount.HasValue)
+                        {
+                            <div class="d-row">
+                                <span class="d-title">Depozito</span>
+                                <span class="d-value">@Model.DepositAmount?.ToString("N0") ₺</span>
+                            </div>
+                        }
+                        @if (Model.MinRentalDays.HasValue)
+                        {
+                            <div class="d-row">
+                                <span class="d-title">Min. Kiralama</span>
+                                <span class="d-value">@Model.MinRentalDays gün</span>
+                            </div>
+                        }
+                        <div class="d-row">
+                            <span class="d-title">Kredi Kartı</span>
+                            <span class="d-value">@(Model.RequiresCreditCard ? "Zorunlu" : "Gerekmiyor")</span>
+                        </div>
+                    </div>
+
+                    <div class="spacer-single"></div>
+
+                    <h4>Özellikler</h4>
+                    <ul class="ul-style-2">
+                        @if (Model.HasAirConditioning)
+                        {
+                            <li>Klima</li>
+                        }
+                        @if (Model.HasBluetooth)
+                        {
+                            <li>Bluetooth</li>
+                        }
+                        @if (Model.HasNavigation)
+                        {
+                            <li>Navigasyon</li>
+                        }
+                        @if (Model.HasBackCamera)
+                        {
+                            <li>Geri Kamera</li>
+                        }
+                        @if (Model.HasSunroof)
+                        {
+                            <li>Sunroof</li>
+                        }
+                        @if (Model.HasHeatedSeats)
+                        {
+                            <li>Isıtmalı Koltuk</li>
+                        }
+                        @if (Model.HasCruiseControl)
+                        {
+                            <li>Cruise Control</li>
+                        }
+                        @if (Model.HasParkingSensor)
+                        {
+                            <li>Park Sensörü</li>
+                        }
+                        @if (Model.HasUSBPort)
+                        {
+                            <li>USB Port</li>
+                        }
+                        @if (Model.HasChildSeat)
+                        {
+                            <li>Çocuk Koltuğu</li>
+                        }
+                        @if (Model.IsSmokingAllowed)
+                        {
+                            <li>Sigara İzni Var</li>
+                        }
+                    </ul>
+                </div>
+
+                <div class="col-lg-3">
+                    <div class="de-price text-center">
+                        Günlük Fiyat
+                        <h3>@Model.DailyPrice.ToString("N0") ₺</h3>
+                    </div>
+
+                    @if (Model.ExtraKmPrice.HasValue)
+                    {
+                        <p class="text-center text-muted" style="margin-top:5px;">
+                            Ekstra KM: @Model.ExtraKmPrice?.ToString("N0") ₺/km
+                        </p>
+                    }
+
+                    <div class="spacer-30"></div>
+                    <a href="/Site/CreateReservation?carId=@Model.CarId" class="btn-main btn-fullwidth">
+                        Hemen Rezervasyon Yap
+                    </a>
+                    <div class="de-box">
+                        <h4>Paylaş</h4>
+                        <div class="de-color-icons">
+                            <span><i class="fa fa-twitter fa-lg"></i></span>
+                            <span><i class="fa fa-facebook fa-lg"></i></span>
+                            <span><i class="fa fa-instagram fa-lg"></i></span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+</div>

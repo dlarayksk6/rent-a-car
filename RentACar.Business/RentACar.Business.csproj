@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\RentACar.Core\RentACar.Core.csproj" />
+		<ProjectReference Include="..\RentACar.DataAccess\RentACar.DataAccess.csproj" />
+		<ProjectReference Include="..\RentACar.DTOs\RentACar.DTOs.csproj" />
+		<ProjectReference Include="..\RentACar.Entities\RentACar.Entities.csproj" />
+	</ItemGroup>
+
+</Project>

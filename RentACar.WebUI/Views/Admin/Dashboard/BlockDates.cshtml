@@ -1,0 +1,263 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Tarih Bloke";
+    var car = ViewBag.Car as RentACar.DTOs.Car.CarListDto;
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.5/main.min.css" />
+
+<section class="content-header">
+    <h1>Tarih Bloke <small>@car?.Brand @car?.Model</small></h1>
+    <ol class="breadcrumb">
+        <li><a href="/Dashboard"><i class="fa fa-dashboard"></i> Panel</a></li>
+        <li class="active">Tarih Bloke</li>
+    </ol>
+</section>
+
+<section class="content">
+    <div class="row">
+
+      
+        <div class="col-md-5">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title"><i class="fa fa-calendar"></i> Takvim</h3>
+                </div>
+                <div class="box-body">
+                    <p class="text-muted small">
+                        <span style="color:#e74c3c;">■</span> Dolu &nbsp;
+                        <span style="color:#e67e22;">■</span> Bakım &nbsp;
+                        <span style="color:#3498db;">■</span> Seçiminiz
+                    </p>
+                    <div id="blockCalendar"></div>
+                </div>
+            </div>
+        </div>
+
+       
+        <div class="col-md-7">
+            <div class="box box-warning">
+                <div class="box-header with-border">
+                    <h3 class="box-title"><i class="fa fa-lock"></i> Bloke Bilgileri</h3>
+                </div>
+                <form method="post" asp-action="BlockDates" asp-controller="Dashboard">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="carId" value="@car?.CarId" />
+
+                    <div class="box-body">
+
+                        <div class="form-group">
+                            <label>Bloke Tipi <span class="text-danger">*</span></label>
+                            <div>
+                                <label class="radio-inline">
+                                    <input type="radio" name="blockType" value="Kiralama" checked />
+                                    <i class="fa fa-car text-blue"></i> Kiralama
+                                </label>
+                                &nbsp;&nbsp;
+                                <label class="radio-inline">
+                                    <input type="radio" name="blockType" value="Bakim" />
+                                    <i class="fa fa-wrench text-orange"></i> Bakım
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                         
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Başlangıç Tarihi <span class="text-danger">*</span></label>
+                                    <input type="text" id="startDateDisplay" class="form-control"
+                                           placeholder="Takvimden seçin" readonly style="background:#fff; cursor:pointer;" />
+                                    <input type="hidden" name="startDate" id="startDateInput" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Başlangıç Saati</label>
+                                    <select name="startTime" class="form-control">
+                                        @for (int h = 0; h <= 23; h++)
+                                        {
+                                            <option value="@(h.ToString("D2")):00"
+                                                    selected="@(h == 9 ? "selected" : null)">
+                                                @(h.ToString("D2")):00
+                                            </option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                    
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Bitiş Tarihi <span class="text-danger">*</span></label>
+                                    <input type="text" id="endDateDisplay" class="form-control"
+                                           placeholder="Takvimden seçin" readonly style="background:#fff; cursor:pointer;" />
+                                    <input type="hidden" name="endDate" id="endDateInput" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Bitiş Saati</label>
+                                    <select name="endTime" class="form-control">
+                                        @for (int h = 0; h <= 23; h++)
+                                        {
+                                            <option value="@(h.ToString("D2")):00"
+                                                    selected="@(h == 18 ? "selected" : null)">
+                                                @(h.ToString("D2")):00
+                                            </option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="summaryBox" style="display:none;" class="callout callout-info">
+                            <p>
+                                <i class="fa fa-calendar"></i>
+                                <span id="summaryText"></span>
+                            </p>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Not</label>
+                            <textarea name="notes" class="form-control" rows="2"
+                                      placeholder="Opsiyonel açıklama..."></textarea>
+                        </div>
+
+                    </div>
+                    <div class="box-footer">
+                        <a href="/Dashboard" class="btn btn-default">
+                            <i class="fa fa-arrow-left"></i> İptal
+                        </a>
+                        <button type="submit" id="submitBtn" class="btn btn-warning pull-right" disabled>
+                            <i class="fa fa-lock"></i> Bloğu Kaydet
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.5/main.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.5/locales/tr.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var bookedDates   = @Html.Raw(ViewBag.BookedDates ?? "[]");
+            var selectedStart = null;
+            var selectedEnd   = null;
+            var selectionEvent = null;
+
+            var calendar = new FullCalendar.Calendar(document.getElementById('blockCalendar'), {
+                initialView: 'dayGridMonth',
+                locale: 'tr',
+                height: 380,
+                validRange: { start: '@DateTime.Now.ToString("yyyy-MM-dd")' },
+                headerToolbar: { left: 'prev,next', center: 'title', right: '' },
+                events: bookedDates.map(function (d) {
+                    return { start: d.start, end: d.end, display: 'background', color: '#e74c3c' };
+                }),
+                dateClick: function (info) {
+                    var clicked = info.dateStr;
+
+                    if (bookedDates.some(function (d) { return clicked >= d.start && clicked < d.end; })) {
+                        alert('Bu tarih zaten dolu!');
+                        return;
+                    }
+
+                    if (!selectedStart || (selectedStart && selectedEnd)) {
+                        selectedStart = clicked;
+                        selectedEnd   = null;
+                        drawSelection();
+                        document.getElementById('startDateDisplay').value = fmtDate(clicked);
+                        document.getElementById('startDateInput').value   = clicked;
+                        document.getElementById('endDateDisplay').value   = '';
+                        document.getElementById('endDateInput').value     = '';
+                        document.getElementById('summaryBox').style.display = 'none';
+                        document.getElementById('submitBtn').disabled = true;
+                    } else {
+                        selectedEnd = clicked;
+                        if (selectedEnd < selectedStart) {
+                            var tmp = selectedStart; selectedStart = selectedEnd; selectedEnd = tmp;
+                        }
+                        if (bookedDates.some(function (d) { return d.start < selectedEnd && d.end > selectedStart; })) {
+                            alert('Seçilen aralıkta dolu günler var!');
+                            resetSelection();
+                            return;
+                        }
+                        drawSelection();
+                        document.getElementById('endDateDisplay').value = fmtDate(selectedEnd);
+                        document.getElementById('endDateInput').value   = selectedEnd;
+                        // Başlangıcı da güncelle (otomatik sıralama sonrası)
+                        document.getElementById('startDateDisplay').value = fmtDate(selectedStart);
+                        document.getElementById('startDateInput').value   = selectedStart;
+                        updateSummary();
+                        document.getElementById('submitBtn').disabled = false;
+                    }
+                }
+            });
+            calendar.render();
+
+            // Saat değişince özeti güncelle
+            $('select[name="startTime"], select[name="endTime"]').on('change', function () {
+                if (selectedStart && selectedEnd) updateSummary();
+            });
+
+                 function updateSummary() {
+            var st = $('select[name="startTime"]').val();
+            var et = $('select[name="endTime"]').val();
+            var startDt = new Date(selectedStart + 'T' + st + ':00');
+            var endDt   = new Date(selectedEnd   + 'T' + et + ':00');
+            var days    = Math.max(1, Math.ceil((endDt - startDt) / 86400000));
+
+            var blockType = $('input[name="blockType"]:checked').val();
+            var priceText = '';
+
+            if (blockType === 'Kiralama') {
+                var dailyPrice = @(ViewBag.Car != null ? ((RentACar.DTOs.Car.CarListDto)ViewBag.Car).DailyPrice.ToString(System.Globalization.CultureInfo.InvariantCulture) : "0");
+                var total = days * dailyPrice;
+                priceText = ' | Tahmini Gelir: ' + total.toLocaleString('tr-TR') + ' ₺';
+            }
+
+            document.getElementById('summaryText').textContent =
+                fmtDate(selectedStart) + ' ' + st + ' → ' + fmtDate(selectedEnd) + ' ' + et +
+                ' (' + days + ' gün)' + priceText;
+            document.getElementById('summaryBox').style.display = 'block';
+        }
+                $('input[name="blockType"]').on('change', function() {
+            if (selectedStart && selectedEnd) updateSummary();
+        });
+            function drawSelection() {
+                if (selectionEvent) { selectionEvent.remove(); selectionEvent = null; }
+                if (!selectedStart) return;
+                var endDraw = selectedEnd ? addDay(selectedEnd) : addDay(selectedStart);
+                selectionEvent = calendar.addEvent({
+                    start: selectedStart, end: endDraw, display: 'background', color: '#3498db'
+                });
+            }
+
+            function resetSelection() {
+                selectedStart = null; selectedEnd = null;
+                if (selectionEvent) { selectionEvent.remove(); selectionEvent = null; }
+                document.getElementById('startDateDisplay').value  = '';
+                document.getElementById('endDateDisplay').value    = '';
+                document.getElementById('startDateInput').value    = '';
+                document.getElementById('endDateInput').value      = '';
+                document.getElementById('summaryBox').style.display = 'none';
+                document.getElementById('submitBtn').disabled = true;
+            }
+
+            function fmtDate(d) {
+                var p = d.split('-'); return p[2] + '.' + p[1] + '.' + p[0];
+            }
+            function addDay(d) {
+                var dt = new Date(d); dt.setDate(dt.getDate() + 1);
+                return dt.toISOString().split('T')[0];
+            }
+        });
+    </script>
+}

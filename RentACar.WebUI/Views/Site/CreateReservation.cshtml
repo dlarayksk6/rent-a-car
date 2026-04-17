@@ -1,0 +1,375 @@
+﻿@model RentACar.DTOs.Reservation.ReservationCreateDto
+@{
+    Layout = "~/Views/Shared/_FrontendLayout.cshtml";
+    ViewBag.Title = "Rezervasyon Oluştur";
+    var car = ViewBag.Car as RentACar.DTOs.Car.CarListDto;
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.5/main.min.css" />
+
+<div class="no-bottom no-top zebra" id="content">
+    <div id="top"></div>
+
+    <section id="subheader" class="jarallax text-light">
+        <img src="/quarter/images/background/subheader.jpg" class="jarallax-img" alt="">
+        <div class="center-y relative text-center">
+            <div class="container">
+                <h1>Rezervasyon Oluştur</h1>
+            </div>
+        </div>
+    </section>
+
+    <section class="pt-5 pb-5">
+        <div class="container">
+            <form asp-action="CreateReservation" asp-controller="Site" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="CarId" />
+                <input type="hidden" asp-for="UserId" />
+                <input type="hidden" id="startDateInput" name="StartDate" />
+                <input type="hidden" id="endDateInput" name="EndDate" />
+                <input type="hidden" id="totalPriceInput" name="TotalPrice" value="0" />
+
+                <div class="row">
+
+                    <div class="col-lg-4">
+
+                 
+                        <div class="de-box mb30">
+                            <h4>Araç Bilgileri</h4>
+                            <div class="text-center mb-3">
+                                <img src="@(string.IsNullOrEmpty(car?.ImageUrl) ? "/quarter/images/cars/default.jpg" : car.ImageUrl)"
+                                     class="img-fluid" style="max-height:200px; border-radius:8px;" />
+                            </div>
+                            <h5 style="color:#e74c3c;">@car?.Brand @car?.Model (@car?.Year)</h5>
+                            <table class="table table-sm">
+                                <tr><td><strong>Plaka</strong></td><td>@car?.PlateNumber</td></tr>
+                                <tr><td><strong>Kategori</strong></td><td>@car?.Category Sınıfı</td></tr>
+                                <tr><td><strong>Yakıt</strong></td><td>@car?.FuelType</td></tr>
+                                <tr><td><strong>Vites</strong></td><td>@car?.Transmission</td></tr>
+                                <tr><td><strong>Min. Yaş</strong></td><td>@car?.MinAge</td></tr>
+                                <tr><td><strong>Min. Ehliyet</strong></td><td>@car?.MinDriverLicenseYear yıl</td></tr>
+                            </table>
+                        </div>
+
+             
+                        <div class="de-box mb30">
+                            <h4>Tarih & Saat Seçimi</h4>
+
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label>📅 Alış Tarihi <span class="text-danger">*</span></label>
+                                        <input type="text" id="startDateDisplay" class="form-control"
+                                               placeholder="Takvimden seçin" readonly style="background:#fff; cursor:pointer;" />
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label>🕐 Alış Saati <span class="text-danger">*</span></label>
+                                     
+                                            <select id="pickupTime" name="PickupTime" class="form-control">
+                                                @for (int h = 0; h <= 23; h++)
+                                                {
+                                                    <option value="@(h.ToString("D2")):00"
+                                                            selected="@(h == 10 ? "selected" : null)">
+                                                        @(h.ToString("D2")):00
+                                                    </option>
+                                                }
+                                            </select>
+                                     
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label>📅 Bırakış Tarihi <span class="text-danger">*</span></label>
+                                        <input type="text" id="endDateDisplay" class="form-control"
+                                               placeholder="Takvimden seçin" readonly style="background:#fff; cursor:pointer;" />
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label>🕐 Bırakış Saati <span class="text-danger">*</span></label>
+                                        <select id="dropoffTime" name="DropoffTime" class="form-control">
+                                            @for (int h = 0; h <= 23; h++)
+                                            {
+                                                <option value="@(h.ToString("D2")):00"
+                                                        selected="@(h == 18 ? "selected" : null)">
+                                                    @(h.ToString("D2")):00
+                                                </option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="priceBox" style="display:none; background:#f8f9fa; padding:15px; border-radius:8px; margin-top:10px;">
+                                <div class="row text-center">
+                                    <div class="col-4">
+                                        <small><strong>Gün</strong></small><br>
+                                        <span id="daysCount" style="font-size:22px; color:#e74c3c; font-weight:bold;">0</span>
+                                    </div>
+                                    <div class="col-4">
+                                        <small><strong>Günlük</strong></small><br>
+                                        <span style="font-size:22px; color:#27ae60; font-weight:bold;">@car?.DailyPrice.ToString("N0") ₺</span>
+                                    </div>
+                                    <div class="col-4">
+                                        <small><strong>Toplam</strong></small><br>
+                                        <span id="totalPriceDisplay" style="font-size:22px; color:#e74c3c; font-weight:bold;">0 ₺</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="de-box mb30">
+                            <p class="text-muted small">
+                              
+                                <span style="color:#e74c3c;">■</span> Rezerve &nbsp;
+                                <span style="color:#3498db;">■</span> Seçiminiz
+                            </p>
+                            <div id="reservationCalendar"></div>
+                        </div>
+
+                    </div>
+                   
+                    <div class="col-lg-8">
+                        <div class="de-box mb30">
+
+                            <h4>Kişisel Bilgiler</h4>
+                            <div class="spacer-20"></div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Ad Soyad <span class="text-danger">*</span></label>
+                                        <input asp-for="FullName" class="form-control" placeholder="Ahmet Yılmaz" />
+                                        <span asp-validation-for="FullName" class="text-danger small"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>TC Kimlik No <span class="text-danger">*</span></label>
+                                        <input asp-for="NationalId" class="form-control" placeholder="11 haneli TC No" maxlength="11" />
+                                        <span asp-validation-for="NationalId" class="text-danger small"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Telefon <span class="text-danger">*</span></label>
+                                        <input asp-for="PhoneNumber" class="form-control" placeholder="0555 123 45 67" />
+                                        <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr />
+                            <h4>Alış & Bırakış Yeri</h4>
+                            <div class="spacer-20"></div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Alış Yeri <span class="text-danger">*</span></label>
+                                        <select id="pickupSelect" class="form-control mb-2" onchange="handleLocationChange('pickup', this.value)">
+                                            <option value="">-- Listeden Seçin --</option>
+                                            @foreach (var loc in (ViewBag.PickupLocations as List<RentACar.Entities.Location>) ?? new List<RentACar.Entities.Location>())
+                                            {
+                                                <option value="@loc.Name">@loc.Name</option>
+                                            }
+                                            <option value="__other__">Diğer (Kendiniz yazın)</option>
+                                        </select>
+                                        <input type="text" id="pickupInput" name="PickupLocation" class="form-control"
+                                               placeholder="Alış yerini yazın..." style="display:none;" />
+                                        <span asp-validation-for="PickupLocation" class="text-danger small"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Bırakış Yeri <span class="text-danger">*</span></label>
+                                        <select id="dropoffSelect" class="form-control mb-2" onchange="handleLocationChange('dropoff', this.value)">
+                                            <option value="">-- Listeden Seçin --</option>
+                                            @foreach (var loc in (ViewBag.DropoffLocations as List<RentACar.Entities.Location>) ?? new List<RentACar.Entities.Location>())
+                                            {
+                                                <option value="@loc.Name">@loc.Name</option>
+                                            }
+                                            <option value="__other__">Diğer (Kendiniz yazın)</option>
+                                        </select>
+                                        <input type="text" id="dropoffInput" name="DropoffLocation" class="form-control"
+                                               placeholder="Bırakış yerini yazın..." style="display:none;" />
+                                        <span asp-validation-for="DropoffLocation" class="text-danger small"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Notlar</label>
+                                <textarea asp-for="Notes" class="form-control" rows="3"
+                                          placeholder="Eklemek istediğiniz notlar..."></textarea>
+                            </div>
+
+                            @if (car?.MinAge > 0 || car?.MinDriverLicenseYear > 0)
+                            {
+                                <div class="alert alert-warning" style="border-radius:6px;">
+                                    <i class="fa fa-warning"></i> <strong>Kiralama Koşulları:</strong>
+                                    Bu araç için minimum
+                                    @if (car.MinAge > 0)
+                                    {
+                                        <span><strong>@car.MinAge yaş</strong></span>
+                                    }
+                                    @if (car.MinDriverLicenseYear > 0)
+                                    {
+                                        <span> ve <strong>@car.MinDriverLicenseYear yıl ehliyet</strong> deneyimi</span>
+                                    }
+                                    gerekmektedir.
+                                </div>
+                            }
+
+                            <div class="spacer-20"></div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <a href="/Site/CarDetail/@car?.CarId" class="btn-main" style="background:#999;">
+                                        Geri Dön
+                                    </a>
+                                </div>
+                                <div class="col-md-6 text-right">
+                                    <button type="submit" class="btn-main">
+                                        Rezervasyonu Tamamla <i class="fa fa-check"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                
+
+                </div>
+            </form>
+        </div>
+    </section>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.5/main.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.5/locales/tr.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var bookedDates = @Html.Raw(ViewBag.BookedDates ?? "[]");
+            var dailyPrice  = @(((double)(car?.DailyPrice ?? 0)).ToString(System.Globalization.CultureInfo.InvariantCulture));
+
+            var selectedStart  = null;
+            var selectedEnd    = null;
+            var selectionEvent = null;
+
+            var calendar = new FullCalendar.Calendar(document.getElementById('reservationCalendar'), {
+                initialView: 'dayGridMonth',
+                locale: 'tr',
+                height: 350,
+                validRange: { start: '@DateTime.Now.ToString("yyyy-MM-dd")' },
+                headerToolbar: { left: 'prev,next', center: 'title', right: '' },
+                events: bookedDates.map(function (d) {
+                    return { start: d.start, end: d.end, display: 'background', color: '#e74c3c' };
+                }),
+                dateClick: function (info) {
+                    var clicked = info.dateStr;
+
+                    if (bookedDates.some(function (d) { return clicked >= d.start && clicked < d.end; })) {
+                        alert('Bu tarih rezerve edilmiş!');
+                        return;
+                    }
+
+                    if (!selectedStart || (selectedStart && selectedEnd)) {
+                        selectedStart = clicked;
+                        selectedEnd   = null;
+                        drawSelection();
+                        document.getElementById('startDateDisplay').value = fmtDate(clicked);
+                        document.getElementById('endDateDisplay').value   = '';
+                        document.getElementById('startDateInput').value   = clicked;
+                        document.getElementById('endDateInput').value     = '';
+                        document.getElementById('priceBox').style.display = 'none';
+                    } else {
+                        selectedEnd = clicked;
+                        if (selectedEnd < selectedStart) {
+                            var tmp = selectedStart; selectedStart = selectedEnd; selectedEnd = tmp;
+                        }
+                        if (bookedDates.some(function (d) { return d.start < selectedEnd && d.end > selectedStart; })) {
+                            alert('Seçilen aralıkta rezerve edilmiş günler var!');
+                            resetSelection();
+                            return;
+                        }
+                        drawSelection();
+                        document.getElementById('startDateDisplay').value = fmtDate(selectedStart);
+                        document.getElementById('endDateDisplay').value   = fmtDate(selectedEnd);
+                        document.getElementById('startDateInput').value   = selectedStart;
+                        document.getElementById('endDateInput').value     = selectedEnd;
+                        calcPrice();
+                    }
+                }
+            });
+            calendar.render();
+
+            $('#pickupTime, #dropoffTime').on('change', function () {
+                if (selectedStart && selectedEnd) calcPrice();
+            });
+
+            function calcPrice() {
+                var startDt = new Date(selectedStart + 'T' + document.getElementById('pickupTime').value + ':00');
+                var endDt   = new Date(selectedEnd   + 'T' + document.getElementById('dropoffTime').value + ':00');
+                var days    = Math.max(1, Math.ceil((endDt - startDt) / 86400000));
+                var total   = days * dailyPrice;
+                document.getElementById('daysCount').textContent         = days;
+                document.getElementById('totalPriceDisplay').textContent = total.toLocaleString('tr-TR') + ' ₺';
+                document.getElementById('totalPriceInput').value         = total;
+                document.getElementById('priceBox').style.display        = 'block';
+            }
+
+            function drawSelection() {
+                if (selectionEvent) { selectionEvent.remove(); selectionEvent = null; }
+                if (!selectedStart) return;
+                var endDraw = selectedEnd ? addDay(selectedEnd) : addDay(selectedStart);
+                selectionEvent = calendar.addEvent({
+                    start: selectedStart, end: endDraw, display: 'background', color: '#3498db'
+                });
+            }
+
+            function resetSelection() {
+                selectedStart = null; selectedEnd = null;
+                if (selectionEvent) { selectionEvent.remove(); selectionEvent = null; }
+                document.getElementById('startDateDisplay').value = '';
+                document.getElementById('endDateDisplay').value   = '';
+                document.getElementById('startDateInput').value   = '';
+                document.getElementById('endDateInput').value     = '';
+                document.getElementById('priceBox').style.display = 'none';
+            }
+
+            function fmtDate(d) {
+                var p = d.split('-'); return p[2] + '.' + p[1] + '.' + p[0];
+            }
+            function addDay(d) {
+                var dt = new Date(d); dt.setDate(dt.getDate() + 1);
+                return dt.toISOString().split('T')[0];
+            }
+
+            document.getElementById('NationalId').addEventListener('input', function () {
+                this.value = this.value.replace(/[^0-9]/g, '');
+            });
+        });
+
+        function handleLocationChange(type, value) {
+            var input = document.getElementById(type + 'Input');
+            if (value === '__other__') {
+                input.style.display = 'block';
+                input.value = '';
+                setTimeout(function () { input.focus(); }, 100);
+            } else {
+                input.style.display = 'none';
+                input.value = value;
+            }
+        }
+    </script>
+}

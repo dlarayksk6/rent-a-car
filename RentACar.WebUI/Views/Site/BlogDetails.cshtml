@@ -1,0 +1,66 @@
+﻿@model RentACar.DTOs.Blog.BlogListDto
+@{
+    Layout = "~/Views/Shared/_FrontendLayout.cshtml";
+    ViewBag.Title = Model.Title;
+}
+
+<div class="no-bottom no-top" id="content">
+    <div id="top"></div>
+
+    <section id="subheader" class="jarallax text-light">
+        <img src="/quarter/images/background/subheader.jpg" class="jarallax-img" alt="">
+        <div class="center-y relative text-center">
+            <div class="container">
+                <h1>@Model.Title</h1>
+            </div>
+        </div>
+    </section>
+
+    <section aria-label="section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="blog-read">
+
+                        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                        {
+                            <img alt="@Model.Title" src="@Model.ImageUrl" class="img-fullwidth mb30">
+                        }
+
+                        <div class="post-text">
+                            <p style="white-space:pre-line;">@Model.Content</p>
+                        </div>
+
+                        <div class="spacer-20"></div>
+                        <p class="text-muted">
+                            <i class="fa fa-calendar"></i> @Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")
+                            @if (Model.UpdatedAt != null)
+                            {
+                                <span> &nbsp;|&nbsp; <i class="fa fa-edit"></i> @Model.UpdatedAt?.ToString("dd.MM.yyyy HH:mm")</span>
+                            }
+                        </p>
+
+                        <a href="/Site/Blog" class="btn-main">
+                            <i class="fa fa-arrow-left"></i> Tüm Yazılar
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="sidebar" class="col-md-4">
+                    <div class="widget">
+                        <h4>Paylaş</h4>
+                        <div class="small-border"></div>
+                        <div class="de-color-icons">
+                            <span><i class="fa fa-twitter fa-lg"></i></span>
+                            <span><i class="fa fa-facebook fa-lg"></i></span>
+                            <span><i class="fa fa-linkedin fa-lg"></i></span>
+                            <span><i class="fa fa-envelope fa-lg"></i></span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+</div>

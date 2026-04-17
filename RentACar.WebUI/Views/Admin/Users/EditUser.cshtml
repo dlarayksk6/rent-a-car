@@ -1,0 +1,138 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Personel Düzenle";
+    var user = ViewBag.User as RentACar.DTOs.User.UserListDto;
+    var permissions = ViewBag.Permissions as List<RentACar.Entities.Permission>;
+    var userPermissions = ViewBag.UserPermissions as List<int>;
+
+    var groups = new Dictionary<string, List<(string Code, string Name, int Id)>>
+    {
+        ["Araçlar"] = new(),
+        ["Rezervasyonlar"] = new(),
+        ["Blog"] = new(),
+        ["Kampanyalar"] = new(),
+        ["Sözleşmeler"] = new(),
+        ["Markalar"] = new(),
+        ["Lokasyonlar"] = new(),
+        ["Kullanıcılar"] = new(),
+        ["Diğer"] = new(),
+    };
+
+    foreach (var permission in permissions)
+    {
+        var item = (permission.Code, permission.Name, permission.Id);
+        if (permission.Code.StartsWith("Cars.")) groups["Araçlar"].Add(item);
+        else if (permission.Code.StartsWith("Reservations.")) groups["Rezervasyonlar"].Add(item);
+        else if (permission.Code.StartsWith("Blog.")) groups["Blog"].Add(item);
+        else if (permission.Code.StartsWith("Campaigns.")) groups["Kampanyalar"].Add(item);
+        else if (permission.Code.StartsWith("Contracts.")) groups["Sözleşmeler"].Add(item);
+        else if (permission.Code.StartsWith("Brands.")) groups["Markalar"].Add(item);
+        else if (permission.Code.StartsWith("Locations.")) groups["Lokasyonlar"].Add(item);
+        else if (permission.Code.StartsWith("Users.")) groups["Kullanıcılar"].Add(item);
+        else groups["Diğer"].Add(item);
+    }
+}
+
+<section class="content-header">
+    <h1>Personel Düzenle</h1>
+</section>
+<section class="content">
+    <div class="box box-warning">
+        <form asp-action="EditUser" method="post">
+            <input type="hidden" name="id" value="@user.Id" />
+            <div class="box-body">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="text" class="form-control" value="@user.Email" disabled />
+                    <small class="text-muted">Email değiştirilemez</small>
+                </div>
+                <div class="form-group">
+                    <label>Yetkiler</label>
+                    <div class="row">
+                        @foreach (var group in groups.Where(g => g.Value.Count > 0))
+                        {
+                            <div class="col-md-4" style="margin-bottom: 15px;">
+                                <div style="border: 1px solid #ddd; border-radius: 6px; padding: 10px;">
+                                    <div style="display: flex; align-items: center; margin-bottom: 8px; border-bottom: 1px solid #eee; padding-bottom: 6px;">
+                                        <input type="checkbox" class="group-check" data-group="@group.Key"
+                                               style="margin-right: 8px;" />
+                                        <strong>@group.Key</strong>
+                                    </div>
+                                    @foreach (var perm in group.Value)
+                                    {
+                                        var isChecked = userPermissions != null && userPermissions.Contains(perm.Id);
+                                        <label style="display: block; margin-bottom: 6px;">
+                                            <input type="checkbox" name="selectedPermissions" value="@perm.Id"
+                                                   class="perm-check" data-group="@group.Key" data-code="@perm.Code"
+                                                   @(isChecked ? "checked" : "") />
+                                            @perm.Name
+                                        </label>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="box-footer">
+                <button type="submit" class="btn btn-success">
+                    <i class="fa fa-save"></i> Güncelle
+                </button>
+                <a href="@Url.Action("Index")" class="btn btn-default">
+                    <i class="fa fa-times"></i> İptal
+                </a>
+            </div>
+        </form>
+    </div>
+</section>
+
+<script>
+    document.querySelectorAll('.group-check').forEach(function(groupCb) {
+        var group = groupCb.dataset.group;
+        var children = document.querySelectorAll('.perm-check[data-group="' + group + '"]');
+
+        var allChecked = Array.from(children).every(c => c.checked);
+        var anyChecked = Array.from(children).some(c => c.checked);
+        groupCb.checked = allChecked;
+        groupCb.indeterminate = !allChecked && anyChecked;
+
+        groupCb.addEventListener('change', function() {
+            children.forEach(c => c.checked = this.checked);
+        });
+
+        children.forEach(function(child) {
+            child.addEventListener('change', function() {
+                var allChecked = Array.from(children).every(c => c.checked);
+                var anyChecked = Array.from(children).some(c => c.checked);
+                groupCb.checked = allChecked;
+                groupCb.indeterminate = !allChecked && anyChecked;
+            });
+        });
+    });
+
+    const dependencies = {
+        'Reservations.Create': 'Reservations.View',
+        'Reservations.Edit': 'Reservations.View',
+        'Reservations.Delete': 'Reservations.View',
+        'Reservations.Approve': 'Reservations.View',
+        'Reservations.Cancel': 'Reservations.View',
+        'Cars.Create': 'Cars.View',
+        'Cars.Edit': 'Cars.View',
+        'Cars.Delete': 'Cars.View',
+        'Blog.Create': 'Blog.View',
+        'Blog.Edit': 'Blog.View',
+        'Blog.Delete': 'Blog.View',
+        'Blog.Approve': 'Blog.View',
+    };
+
+    document.querySelectorAll('.perm-check').forEach(function(cb) {
+        cb.addEventListener('change', function() {
+            var code = this.dataset.code;
+            if (this.checked && dependencies[code]) {
+                var depCode = dependencies[code];
+                var depCb = document.querySelector('.perm-check[data-code="' + depCode + '"]');
+                if (depCb) depCb.checked = true;
+            }
+        });
+    });
+</script>

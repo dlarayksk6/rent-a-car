@@ -1,0 +1,90 @@
+﻿@model RentACar.DTOs.Dashboard.DashboardDto
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Ana Sayfa";
+}
+
+<section class="content-header">
+    <h1>Ana Sayfa</h1>
+</section>
+
+<section class="content">
+    <div class="row">
+        <div class="col-lg-3 col-xs-6">
+            <div class="small-box bg-aqua">
+                <div class="inner">
+                    <h3>@Model.TotalCars</h3>
+                    <p>Toplam Araç</p>
+                </div>
+                <div class="icon">
+                    <i class="fa fa-car"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-xs-6">
+            <div class="small-box bg-green">
+                <div class="inner">
+                    <h3>@Model.TotalReservations</h3>
+                    <p>Toplam Rezervasyon</p>
+                </div>
+                <div class="icon">
+                    <i class="fa fa-book"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-xs-6">
+            <div class="small-box bg-yellow">
+                <div class="inner">
+                    <h3>@Model.ActiveReservations</h3>
+                    <p>Aktif Rezervasyon</p>
+                </div>
+                <div class="icon">
+                    <i class="fa fa-clock-o"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-xs-6">
+            <div class="small-box bg-red">
+                <div class="inner">
+                    <h3>@Model.TotalRevenue.ToString("N0") ₺</h3>
+                    <p>Toplam Gelir</p>
+                </div>
+                <div class="icon">
+                    <i class="fa fa-money"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="box">
+        <div class="box-header">
+            <h3 class="box-title">Son 5 Rezervasyon</h3>
+        </div>
+        <div class="box-body table-responsive no-padding">
+            <table class="table table-hover">
+                <tr>
+                    <th>Müşteri</th>
+                    <th>Araç</th>
+                    <th>Başlangıç</th>
+                    <th>Bitiş</th>
+                    <th>Durum</th>
+                    <th>Tutar</th>
+                </tr>
+                @foreach (var r in Model.RecentReservations)
+                {
+                    <tr>
+                        <td>@r.FullName</td>
+                        <td>@r.CarBrand @r.CarModel</td>
+                        <td>@r.StartDate.ToString("dd.MM.yyyy")</td>
+                        <td>@r.EndDate.ToString("dd.MM.yyyy")</td>
+                        <td>@r.Status</td>
+                        <td>@r.TotalPrice.ToString("N0") ₺</td>
+                    </tr>
+                }
+            </table>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,706 @@
+﻿@model List<RentACar.DTOs.Car.CarListDto>
+@{
+    Layout = "~/Views/Shared/_FrontendLayout.cshtml";
+    ViewBag.Title = "Araçlarımız";
+    var allBrands = Model.Select(c => c.Brand).Distinct().OrderBy(x => x).ToList();
+    var allColors = Model.Select(c => c.Color).Distinct().OrderBy(x => x).ToList();
+    var allBodyTypes = Model.Where(c => !string.IsNullOrEmpty(c.BodyType)).Select(c => c.BodyType).Distinct().OrderBy(x => x).ToList();
+}
+
+<div class="no-bottom no-top zebra" id="content">
+    <div id="top"></div>
+
+    <section id="subheader" class="jarallax text-light">
+        <img src="/quarter/images/background/subheader.jpg" class="jarallax-img" alt="">
+        <div class="center-y relative text-center">
+            <div class="container">
+                <h1>Araçlarımız</h1>
+            </div>
+        </div>
+    </section>
+
+    <section id="section-cars">
+        <div class="container">
+
+            @if (ViewBag.StartDate != null)
+            {
+                <div class="alert" style="background:#eaf6ff; border:1px solid #3498db; border-radius:8px; color:#2980b9; margin-bottom:20px;">
+                    <i class="fa fa-calendar"></i>
+                    <strong>@ViewBag.StartDateDisplay – @ViewBag.EndDateDisplay</strong> tarihleri arasında müsait araçlar gösteriliyor.
+                    <a href="/Site/Cars" style="float:right; color:#e74c3c;">✕ Tarihi Kaldır</a>
+                </div>
+                <input type="hidden" id="filterStartDate" value="@ViewBag.StartDate" />
+                <input type="hidden" id="filterEndDate" value="@ViewBag.EndDate" />
+            }
+
+            <div class="row">
+                <div class="col-lg-3" id="filterSidebar">
+                    <div id="filterPanel">
+                        <button class="filter-close-btn" id="filterCloseBtn">
+                            <i class="fa fa-times"></i>
+                        </button>
+                        <!-- mevcut içerik devam eder -->
+
+                        <div class="filter-header">
+                            <span><i class="fa fa-sliders"></i> Filtreler</span>
+                            <a href="#" id="clearFilters">
+                                <i class="fa fa-times"></i> Temizle
+                            </a>
+                        </div>
+
+                        <form id="carFilters">
+
+                            <div class="filter-group">
+                                <div class="filter-title" onclick="toggleGroup(this)">
+                                    <span><i class="fa fa-car"></i> Marka</span>
+                                    <i class="fa fa-chevron-down"></i>
+                                </div>
+                                <div class="filter-body">
+                                    @foreach (var brand in allBrands)
+                                    {
+                                        <label class="check-label">
+                                            <input class="filter-input" type="checkbox" name="brands" value="@brand">
+                                            <span>@brand</span>
+                                        </label>
+                                    }
+                                </div>
+                            </div>
+
+                          
+                            @if (allBodyTypes.Any())
+                            {
+                                <div class="filter-group">
+                                    <div class="filter-title" onclick="toggleGroup(this)">
+                                        <span><i class="fa fa-automobile"></i> Araç Tipi</span>
+                                        <i class="fa fa-chevron-down"></i>
+                                    </div>
+                                    <div class="filter-body">
+                                        @foreach (var bt in allBodyTypes)
+                                        {
+                                            <label class="check-label">
+                                                <input class="filter-input" type="checkbox" name="bodyTypes" value="@bt">
+                                                <span>@bt</span>
+                                            </label>
+                                        }
+                                    </div>
+                                </div>
+                            }
+
+                            <div class="filter-group">
+                                <div class="filter-title" onclick="toggleGroup(this)">
+                                    <span><i class="fa fa-tag"></i> Araç Sınıfı</span>
+                                    <i class="fa fa-chevron-down"></i>
+                                </div>
+                                <div class="filter-body">
+                                    @foreach (var cat in new[] { "A", "B", "C", "D", "E" })
+                                    {
+                                        <label class="check-label">
+                                            <input class="filter-input" type="checkbox" name="category" value="@cat">
+                                            <span>@cat Sınıfı</span>
+                                        </label>
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="filter-group">
+                                <div class="filter-title" onclick="toggleGroup(this)">
+                                    <span><i class="fa fa-tint"></i> Yakıt Tipi</span>
+                                    <i class="fa fa-chevron-down"></i>
+                                </div>
+                                <div class="filter-body">
+                                    @foreach (var f in new[] { ("dizel", "Dizel"), ("benzin", "Benzin"), ("elektrik", "Elektrik"), ("hibrit", "Hibrit"), ("lpg", "LPG") })
+                                    {
+                                        <label class="check-label">
+                                            <input class="filter-input" type="checkbox" name="fuel" value="@f.Item1">
+                                            <span>@f.Item2</span>
+                                        </label>
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="filter-group">
+                                <div class="filter-title" onclick="toggleGroup(this)">
+                                    <span><i class="fa fa-cogs"></i> Vites Tipi</span>
+                                    <i class="fa fa-chevron-down"></i>
+                                </div>
+                                <div class="filter-body">
+                                    <label class="check-label">
+                                        <input class="filter-input" type="checkbox" name="transmission" value="otomatik">
+                                        <span>Otomatik</span>
+                                    </label>
+                                    <label class="check-label">
+                                        <input class="filter-input" type="checkbox" name="transmission" value="manuel">
+                                        <span>Manuel</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                           
+                            <div class="filter-group">
+                                <div class="filter-title" onclick="toggleGroup(this)">
+                                    <span><i class="fa fa-paint-brush"></i> Renk</span>
+                                    <i class="fa fa-chevron-down"></i>
+                                </div>
+                                <div class="filter-body">
+                                    @foreach (var color in allColors)
+                                    {
+                                        <label class="check-label">
+                                            <input class="filter-input" type="checkbox" name="colors" value="@color">
+                                            <span>@color</span>
+                                        </label>
+                                    }
+                                </div>
+                            </div>
+
+                     
+                            <div class="filter-group">
+                                <div class="filter-title" onclick="toggleGroup(this)">
+                                    <span><i class="fa fa-users"></i> Koltuk Sayısı</span>
+                                    <i class="fa fa-chevron-down"></i>
+                                </div>
+                                <div class="filter-body">
+                                    @foreach (var s in new[] { ("2", "2 Kişilik"), ("4", "4 Kişilik"), ("5", "5 Kişilik"), ("7", "7 Kişilik"), ("9", "9+ Kişilik") })
+                                    {
+                                        <label class="check-label">
+                                            <input class="filter-input" type="checkbox" name="seats" value="@s.Item1">
+                                            <span>@s.Item2</span>
+                                        </label>
+                                    }
+                                </div>
+                            </div>
+
+                       
+                            <div class="filter-group">
+                                <div class="filter-title" onclick="toggleGroup(this)">
+                                    <span><i class="fa fa-star"></i> Özellikler</span>
+                                    <i class="fa fa-chevron-down"></i>
+                                </div>
+                                <div class="filter-body">
+                                    @foreach (var feat in new[] {
+                                                                        ("hasAC","fa-snowflake-o","Klima"),
+                                                                        ("hasBluetooth","fa-bluetooth","Bluetooth"),
+                                                                        ("hasNavigation","fa-map-marker","Navigasyon"),
+                                                                        ("hasBackCamera","fa-camera","Geri Kamera"),
+                                                                        ("hasSunroof","fa-sun-o","Sunroof"),
+                                                                        ("hasHeatedSeats","fa-fire","Isıtmalı Koltuk"),
+                                                                        ("hasCruiseControl","fa-dashboard","Cruise Control"),
+                                                                        ("hasParkingSensor","fa-dot-circle-o","Park Sensörü"),
+                                                                        ("hasChildSeat","fa-child","Çocuk Koltuğu"),
+                                                                        ("hasUSBPort","fa-usb","USB Port")
+                                                                        })
+                                    {
+                                        <label class="check-label">
+                                            <input class="filter-input-feat" type="checkbox" name="@feat.Item1" value="true">
+                                            <span><i class="fa @feat.Item2"></i> @feat.Item3</span>
+                                        </label>
+                                    }
+                                </div>
+                            </div>
+
+                      
+                            <div class="filter-group">
+                                <div class="filter-title" onclick="toggleGroup(this)">
+                                    <span><i class="fa fa-money"></i> Günlük Fiyat (₺)</span>
+                                    <i class="fa fa-chevron-down"></i>
+                                </div>
+                                <div class="filter-body">
+                                    <div class="range-row">
+                                        <input type="number" name="minPrice" id="minPrice" class="filter-input-range" placeholder="Min">
+                                        <span>—</span>
+                                        <input type="number" name="maxPrice" id="maxPrice" class="filter-input-range" placeholder="Max">
+                                    </div>
+                                </div>
+                            </div>
+
+                          
+                            <div class="filter-group">
+                                <div class="filter-title" onclick="toggleGroup(this)">
+                                    <span><i class="fa fa-calendar"></i> Model Yılı</span>
+                                    <i class="fa fa-chevron-down"></i>
+                                </div>
+                                <div class="filter-body">
+                                    <div class="range-row">
+                                        <input type="number" name="minYear" id="minYear" class="filter-input-range" placeholder="Min" min="2000" max="2025">
+                                        <span>—</span>
+                                        <input type="number" name="maxYear" id="maxYear" class="filter-input-range" placeholder="Max" min="2000" max="2025">
+                                    </div>
+                                </div>
+                            </div>
+
+                         
+                            <div class="filter-group">
+                                <div class="filter-title" onclick="toggleGroup(this)">
+                                    <span><i class="fa fa-bolt"></i> Min. Beygir Gücü</span>
+                                    <i class="fa fa-chevron-down"></i>
+                                </div>
+                                <div class="filter-body">
+                                    <select name="minHorsePower" id="minHorsePower" class="filter-input-select">
+                                        <option value="">Tümü</option>
+                                        <option value="100">100+ HP</option>
+                                        <option value="150">150+ HP</option>
+                                        <option value="200">200+ HP</option>
+                                        <option value="300">300+ HP</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                  
+                            <div class="filter-group">
+                                <div class="filter-title" onclick="toggleGroup(this)">
+                                    <span><i class="fa fa-suitcase"></i> Min. Bagaj (L)</span>
+                                    <i class="fa fa-chevron-down"></i>
+                                </div>
+                                <div class="filter-body">
+                                    <select name="minLuggage" id="minLuggage" class="filter-input-select">
+                                        <option value="">Tümü</option>
+                                        <option value="200">200+ L</option>
+                                        <option value="300">300+ L</option>
+                                        <option value="400">400+ L</option>
+                                        <option value="500">500+ L</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="filter-group">
+                                <div class="filter-title" onclick="toggleGroup(this)">
+                                    <span><i class="fa fa-user"></i> Yaş Gereksinimi</span>
+                                    <i class="fa fa-chevron-down"></i>
+                                </div>
+                                <div class="filter-body">
+                                    <select name="maxMinAge" id="maxMinAge" class="filter-input-select">
+                                        <option value="">Tümü</option>
+                                        <option value="18">18 ve altı</option>
+                                        <option value="21">21 ve altı</option>
+                                        <option value="23">23 ve altı</option>
+                                        <option value="25">25 ve altı</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                          
+                            <div class="filter-group">
+                                <div class="filter-title" onclick="toggleGroup(this)">
+                                    <span><i class="fa fa-id-card"></i> Ehliyet Süresi</span>
+                                    <i class="fa fa-chevron-down"></i>
+                                </div>
+                                <div class="filter-body">
+                                    <select name="maxMinLicense" id="maxMinLicense" class="filter-input-select">
+                                        <option value="">Tümü</option>
+                                        <option value="1">1 yıl ve altı</option>
+                                        <option value="2">2 yıl ve altı</option>
+                                        <option value="3">3 yıl ve altı</option>
+                                        <option value="5">5 yıl ve altı</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                        </form>
+
+                        <div id="activeFiltersSection" style="display:none; margin-top:15px; padding-top:15px; border-top:1px solid #eee;">
+                            <small style="font-weight:600; color:#666;">AKTİF FİLTRELER:</small>
+                            <div id="activeFiltersList" style="margin-top:8px; display:flex; flex-wrap:wrap; gap:6px;"></div>
+                        </div>
+
+                    </div>
+                </div>
+                <!-- MOBİL FİLTRE BUTONU -->
+                <div class="mobile-filter-bar d-lg-none">
+                    <button id="mobileFilterBtn" class="mobile-filter-toggle">
+                        <i class="fa fa-sliders"></i> Filtreler
+                        <span id="mobileFilterBadge" class="filter-badge" style="display:none;">0</span>
+                    </button>
+                </div>
+                <div class="col-lg-9">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; padding:12px 16px; background:#f8f9fa; border-radius:8px;">
+                        <span><strong id="carCount">@Model.Count araç</strong> listeleniyor</span>
+                    </div>
+                    <div class="row" id="carList">
+                        @Html.Partial("_CarListPartial", Model)
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+</div>
+
+<style>
+    #filterPanel {
+        background: #fff;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+        position: sticky;
+        top: 20px;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    .filter-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #f0f0f0;
+        font-weight: 700;
+        font-size: 16px;
+        color: #1a1a2e;
+    }
+
+        .filter-header a {
+            color: #e74c3c;
+            font-size: 13px;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+    .filter-group {
+        border-bottom: 1px solid #f0f0f0;
+        margin-bottom: 5px;
+    }
+
+    .filter-title {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 14px;
+        color: #333;
+        user-select: none;
+    }
+
+        .filter-title:hover {
+            color: #e74c3c;
+        }
+
+        .filter-title i.fa-chevron-down {
+            font-size: 11px;
+            transition: transform 0.2s;
+        }
+
+        .filter-title.open i.fa-chevron-down {
+            transform: rotate(180deg);
+        }
+
+    .filter-body {
+        display: none;
+        padding-bottom: 12px;
+    }
+
+        .filter-body.open {
+            display: block;
+        }
+
+    .check-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 5px 0;
+        cursor: pointer;
+        font-size: 13px;
+        color: #555;
+        font-weight: normal;
+    }
+
+        .check-label input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: #e74c3c;
+            flex-shrink: 0;
+        }
+
+        .check-label:hover {
+            color: #e74c3c;
+        }
+
+    .range-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .filter-input-range {
+        flex: 1;
+        padding: 7px 10px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 13px;
+        width: 100%;
+    }
+
+    .filter-input-select {
+        width: 100%;
+        padding: 8px 10px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 13px;
+    }
+
+    .filter-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: #1a1a2e;
+        color: white;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+        .filter-tag:hover {
+            background: #e74c3c;
+        }
+    /* MOBİL FİLTRE */
+    .mobile-filter-bar {
+        padding: 12px 0;
+        margin-bottom: 10px;
+    }
+
+    .mobile-filter-toggle {
+        width: 100%;
+        padding: 12px 20px;
+        background: #1a1a2e;
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        justify-content: center;
+    }
+
+        .mobile-filter-toggle:hover {
+            background: #e74c3c;
+        }
+
+    .filter-badge {
+        background: #e74c3c;
+        color: #fff;
+        border-radius: 50%;
+        width: 22px;
+        height: 22px;
+        font-size: 11px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+    }
+
+    /* MOBİL OVERLAY */
+    .filter-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 1040;
+    }
+
+        .filter-overlay.active {
+            display: block;
+        }
+
+    /* MOBİL DRAWER */
+    @@media (max-width: 991px) {
+        #filterSidebar {
+            position: fixed;
+            top: 0;
+            left: -100%;
+            width: 85%;
+            max-width: 340px;
+            height: 100vh;
+            z-index: 1050;
+            transition: left 0.3s ease;
+            padding: 0;
+        }
+
+            #filterSidebar.open {
+                left: 0;
+            }
+
+        #filterPanel {
+            height: 100vh;
+            max-height: 100vh;
+            border-radius: 0;
+            overflow-y: auto;
+            padding-top: 60px;
+        }
+
+        .filter-close-btn {
+            display: flex !important;
+        }
+    }
+
+    @@media (min-width: 992px) {
+        .mobile-filter-bar {
+            display: none;
+        }
+
+        .filter-close-btn {
+            display: none !important;
+        }
+
+        .filter-overlay {
+            display: none !important;
+        }
+    }
+
+    .filter-close-btn {
+        display: none;
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: #e74c3c;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+        cursor: pointer;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        function toggleGroup(el) {
+            var body = el.nextElementSibling;
+            el.classList.toggle('open');
+            body.classList.toggle('open');
+        }
+
+        $(document).ready(function() {
+
+            $(".filter-input, .filter-input-feat").on("change", function() {
+                applyFilters();
+            });
+
+            $(".filter-input-range, .filter-input-select").on("change keyup", function() {
+                clearTimeout(window.filterTimeout);
+                window.filterTimeout = setTimeout(applyFilters, 500);
+            });
+
+            function applyFilters() {
+                var formData = $("#carFilters").serialize();
+                var startDate = $("#filterStartDate").val();
+                var endDate = $("#filterEndDate").val();
+                if (startDate) formData += "&startDate=" + startDate;
+                if (endDate) formData += "&endDate=" + endDate;
+
+                $.ajax({
+                    url: "/Site/FilterCars",
+                    type: "GET",
+                    data: formData,
+                    success: function(data) {
+                        $("#carList").html(data);
+                        updateCarCount();
+                        updateActiveFilters();
+                    }
+                });
+            }
+
+            function updateCarCount() {
+                var count = $("#carList [data-car-item]").length;
+                $("#carCount").text(count + " araç");
+            }
+
+            function updateActiveFilters() {
+                var tags = [];
+
+                $(".filter-input:checked, .filter-input-feat:checked").each(function() {
+                    var label = $(this).closest('.check-label').find('span').text().trim();
+                    var el = $(this);
+                    tags.push({ text: label, clear: function() { el.prop('checked', false); applyFilters(); } });
+                });
+
+                [
+                    { id: "#minPrice", label: "Min Fiyat: {v}₺" },
+                    { id: "#maxPrice", label: "Max Fiyat: {v}₺" },
+                    { id: "#minYear", label: "Min Yıl: {v}" },
+                    { id: "#maxYear", label: "Max Yıl: {v}" },
+                    { id: "#minHorsePower", label: "Min HP: {v}" },
+                    { id: "#minLuggage", label: "Min Bagaj: {v}L" },
+                    { id: "#maxMinAge", label: "Yaş: {v}" },
+                    { id: "#maxMinLicense", label: "Ehliyet: {v} yıl" }
+                ].forEach(function(f) {
+                    var val = $(f.id).val();
+                    if (val) {
+                        var el = $(f.id);
+                        tags.push({ text: f.label.replace('{v}', val), clear: function() { el.val(''); applyFilters(); } });
+                    }
+                });
+
+                if (tags.length > 0) {
+                    var html = '';
+                    tags.forEach(function(t, i) {
+                        html += '<span class="filter-tag" data-idx="' + i + '">' + t.text + ' ×</span>';
+                    });
+                    $("#activeFiltersList").html(html);
+                    $("#activeFiltersSection").show();
+
+                    $(".filter-tag").on("click", function() {
+                        tags[$(this).data("idx")].clear();
+                    });
+                } else {
+                    $("#activeFiltersSection").hide();
+                }
+            }
+
+            $("#clearFilters").on("click", function(e) {
+                e.preventDefault();
+                $(".filter-input, .filter-input-feat").prop("checked", false);
+                $(".filter-input-range").val("");
+                $(".filter-input-select").val("");
+                applyFilters();
+            });
+
+            updateCarCount();
+        });
+        // MOBİL FİLTRE DRAWER
+        var $overlay = $('<div class="filter-overlay" id="filterOverlay"></div>').appendTo('body');
+
+        $("#mobileFilterBtn").on("click", function() {
+            $("#filterSidebar").addClass("open");
+            $overlay.addClass("active");
+            $('body').css('overflow', 'hidden');
+        });
+
+        function closeFilterDrawer() {
+            $("#filterSidebar").removeClass("open");
+            $overlay.removeClass("active");
+            $('body').css('overflow', '');
+        }
+
+        $("#filterCloseBtn").on("click", closeFilterDrawer);
+        $overlay.on("click", closeFilterDrawer);
+
+        // Aktif filtre sayısını badge'e yansıt
+        function updateFilterBadge() {
+            var count = $(".filter-input:checked, .filter-input-feat:checked").length;
+            $(".filter-input-range").each(function() { if ($(this).val()) count++; });
+            $(".filter-input-select").each(function() { if ($(this).val()) count++; });
+
+            if (count > 0) {
+                $("#mobileFilterBadge").text(count).show();
+            } else {
+                $("#mobileFilterBadge").hide();
+            }
+        }
+
+        $(".filter-input, .filter-input-feat, .filter-input-range, .filter-input-select").on("change", updateFilterBadge);
+    </script>
+}

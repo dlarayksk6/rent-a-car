@@ -1,0 +1,130 @@
+﻿@model List<RentACar.DTOs.Blog.BlogListDto>
+
+@{
+    Layout = "~/Views/Shared/_FrontendLayout.cshtml";
+    ViewBag.Title = "Blog";
+}
+
+<section id="subheader" class="jarallax text-light">
+    <img src="/quarter/images/background/subheader.jpg" class="jarallax-img" alt="">
+    <div class="center-y relative text-center">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <h1>Blog &amp; Haberler</h1>
+                    <p class="lead">En güncel haberler, duyurular ve içeriklerimizi keşfedin.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="section-content" aria-label="section">
+    <div class="container">
+        <div class="row gx-5">
+
+            <div class="col-lg-8">
+                @if (Model == null || !Model.Any())
+                {
+                    <div class="alert alert-info">Henüz blog yazısı bulunmamaktadır.</div>
+                }
+                else
+                {
+                    @foreach (var blog in Model)
+                    {
+                        <div class="de-post-type-1">
+                            <div class="d-image">
+                                <img alt="@blog.Title"
+                                     src="@(string.IsNullOrEmpty(blog.ImageUrl) ? "/quarter/images/news-2/pic-blog-1.jpg" : blog.ImageUrl)"
+                                     class="lazy"
+                                     style="height:300px; object-fit:cover; width:100%;">
+                            </div>
+                            <div class="d-content" style="position: relative;">
+                                <div class="d-meta">
+                                    <span class="d-date">
+                                     
+                                        @blog.CreatedAt.ToString("dd MMMM yyyy")
+                                    </span>
+                                    @if (!string.IsNullOrEmpty(blog.AuthorId))
+                                    {
+                                        <span class="d-by">
+                                           Admin
+                                        </span>
+                                    }
+                                </div>
+                                <h4>
+                                    <a href="/Site/BlogDetails/@blog.BlogPostId">
+                                        @blog.Title<span></span>
+                                    </a>
+                                </h4>
+                                <p>
+                                    @(blog.Content.Length > 200
+                                                                ? blog.Content.Substring(0, 200) + "..."
+                                                                : blog.Content)
+                                </p>
+                                <a href="/Site/BlogDetails/@blog.BlogPostId" class="btn-main">Devamını Oku</a>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+
+            <div class="col-lg-4">
+
+                <div class="widget widget-post">
+                    <h4>Son Yazılar</h4>
+                    <div class="small-border"></div>
+                    <ul class="de-bloglist-type-1">
+                        @foreach (var blog in Model.Take(4))
+                        {
+                            <li>
+                                <div class="d-image">
+                                    <img src="@(string.IsNullOrEmpty(blog.ImageUrl) ? "/quarter/images/news-thumbnail/pic-blog-1.jpg" : blog.ImageUrl)"
+                                         alt="@blog.Title"
+                                         style="width:80px; height:60px; object-fit:cover;">
+                                </div>
+                                <div class="d-content">
+                                    <a href="/Site/BlogDetails/@blog.BlogPostId">
+                                        <h4>@blog.Title</h4>
+                                    </a>
+                                    <div class="d-date">@blog.CreatedAt.ToString("dd MMM yyyy")</div>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                </div>
+
+                <div class="widget">
+                    <h4>Hakkımızda</h4>
+                    <div class="small-border"></div>
+                    <p>
+                        Araç kiralama sektöründe yıllarca edindiğimiz tecrübeyle,
+                        müşterilerimize en konforlu ve güvenli yolculuk deneyimini sunuyoruz.
+                    </p>
+                    <a href="/Site/About" class="btn-main btn-small">Daha Fazla</a>
+                </div>
+
+                <div class="widget">
+                    <h4>Bize Ulaşın</h4>
+                    <div class="small-border"></div>
+                    <address class="s1">
+                        @if (ViewBag.SiteContact != null)
+                        {
+                            <span><i class="id-color fa fa-map-marker fa-lg"></i> @ViewBag.SiteContact.Address</span>
+                            <span><i class="id-color fa fa-phone fa-lg"></i> @ViewBag.SiteContact.Phone</span>
+                            <span>
+                                <i class="id-color fa fa-envelope-o fa-lg"></i>
+                                <a href="mailto:@ViewBag.SiteContact.Email">@ViewBag.SiteContact.Email</a>
+                            </span>
+                        }
+                        else
+                        {
+                            <span><i class="id-color fa fa-phone fa-lg"></i>Bize ulaşın</span>
+                        }
+                    </address>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>

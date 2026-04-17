@@ -1,0 +1,23 @@
+﻿@page
+@model ResetAuthenticatorModel
+@{
+    ViewData["Title"] = "Kimlik doğrulayıcı anahtarını sıfırla";
+    ViewData["ActivePage"] = ManageNavPages.TwoFactorAuthentication;
+}
+<partial name="_StatusMessage" for="StatusMessage" />
+<h3>@ViewData["Title"]</h3>
+<div class="alert alert-warning" role="alert">
+    <p>
+        <span class="glyphicon glyphicon-warning-sign"></span>
+        <strong>Kimlik doğrulayıcı anahtarınızı sıfırlarsanız, yeniden yapılandırana kadar kimlik doğrulayıcı uygulamanız çalışmayacaktır.</strong>
+    </p>
+    <p>
+        Bu işlem, kimlik doğrulayıcı uygulamanızı doğrulayana kadar 2FA'yı devre dışı bırakır.
+        Kimlik doğrulayıcı uygulama yapılandırmanızı tamamlamazsanız hesabınıza erişiminizi kaybedebilirsiniz.
+    </p>
+</div>
+<div>
+    <form id="reset-authenticator-form" method="post">
+        <button id="reset-authenticator-button" class="btn btn-danger" type="submit">Kimlik doğrulayıcı anahtarını sıfırla</button>
+    </form>
+</div>

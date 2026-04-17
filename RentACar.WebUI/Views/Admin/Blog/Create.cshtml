@@ -1,0 +1,33 @@
+﻿@model RentACar.DTOs.Blog.BlogCreateDto
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<section class="content-header">
+    <h1>Yeni Blog Yazısı</h1>
+</section>
+<section class="content">
+    <div class="box box-primary">
+        <div class="box-body">
+            <form asp-action="Create" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <div class="form-group">
+                    <label>Başlık</label>
+                    <input asp-for="Title" class="form-control" />
+                    <span asp-validation-for="Title" class="text-danger small"></span>
+                </div>
+                <div class="form-group">
+                    <label>İçerik</label>
+                    <textarea asp-for="Content" class="form-control" rows="7"></textarea>
+                    <span asp-validation-for="Content" class="text-danger small"></span>
+                </div>
+                <div class="form-group">
+                    <label>Görsel</label>
+                    <input type="file" name="imageFile" class="form-control" accept="image/*" />
+                </div>
+                <button type="submit" class="btn btn-success">
+                    <i class="fa fa-save"></i> Kaydet
+                </button>
+            </form>
+        </div>
+    </div>
+</section>

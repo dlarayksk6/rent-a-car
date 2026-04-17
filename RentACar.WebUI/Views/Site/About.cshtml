@@ -1,0 +1,138 @@
+﻿@model RentACar.Entities.AboutContent
+@{
+    Layout = "~/Views/Shared/_FrontendLayout.cshtml";
+    ViewBag.Title = "Hakkımızda";
+}
+
+<div class="no-bottom no-top zebra" id="content">
+    <div id="top"></div>
+
+    <section id="subheader" class="jarallax text-light">
+        <img src="/quarter/images/background/subheader.jpg" class="jarallax-img" alt="">
+        <div class="center-y relative text-center">
+            <div class="container">
+                <h1>Hakkımızda</h1>
+            </div>
+        </div>
+    </section>
+
+    <section aria-label="section" class="pt80 pb80">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 wow fadeInRight">
+                    <img src="@(string.IsNullOrEmpty(Model?.ImageUrl) ? "/quarter/images/car-single/4.jpg" : Model.ImageUrl)"
+                         alt="RentACar Filosu" class="img-fluid">
+                </div>
+                <div class="col-lg-6 wow fadeInLeft">
+                    <h2 class="mb-4">@(string.IsNullOrEmpty(Model?.Title) ? "Güvenilirliğin ve Konforun Tek Adresi" : Model.Title)</h2>
+                    <h4 class="id-color">@(string.IsNullOrEmpty(Model?.SubTitle) ? "RentACar: Yolculuğunuzun Anahtarı" : Model.SubTitle)</h4>
+
+                    <p>@(string.IsNullOrEmpty(Model?.Description1) ? "RentACar olarak, 2010 yılından bu yana Trabzon ve çevresinde güvenilir araç kiralama hizmetleri sunuyoruz. Misyonumuz; modern, bakımlı ve geniş araç filomuzla müşterilerimize konforlu ve güvenli bir seyahat deneyimi yaşatmaktır." : Model.Description1)</p>
+
+                    @if (!string.IsNullOrEmpty(Model?.Description2))
+                    {
+                        <p>@Model.Description2</p>
+                    }
+                    @if (!string.IsNullOrEmpty(Model?.Description3))
+                    {
+                        <p>@Model.Description3</p>
+                    }
+                    <div class="spacer-20"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section aria-label="section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 offset-lg-3 text-center">
+                    <h2>Öne Çıkan Özellikler</h2>
+                    <div class="spacer-20"></div>
+                </div>
+
+                <div class="col-lg-3">
+                    <div class="box-icon s2 p-small mb20 wow fadeInRight">
+                        <i class="fa bg-color fa-trophy"></i>
+                        <div class="d-inner">
+                            <h4>@(string.IsNullOrEmpty(Model?.Feature1Title) ? "Birinci Sınıf Hizmet" : Model.Feature1Title)</h4>
+                            @(string.IsNullOrEmpty(Model?.Feature1Text) ? "Kaliteyle harmanlanmış profesyonel hizmet." : Model.Feature1Text)
+                        </div>
+                    </div>
+                    <div class="box-icon s2 p-small mb20 wow fadeInRight">
+                        <i class="fa bg-color fa-road"></i>
+                        <div class="d-inner">
+                            <h4>@(string.IsNullOrEmpty(Model?.Feature2Title) ? "7/24 Yol Yardım" : Model.Feature2Title)</h4>
+                            @(string.IsNullOrEmpty(Model?.Feature2Text) ? "Nerede olursanız olun yanınızdayız." : Model.Feature2Text)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <img src="/quarter/images/misc/car.png" alt="" class="img-fluid wow fadeInUp">
+                </div>
+
+                <div class="col-lg-3">
+                    <div class="box-icon s2 d-invert p-small mb20 wow fadeInLeft">
+                        <i class="fa bg-color fa-tag"></i>
+                        <div class="d-inner">
+                            <h4>@(string.IsNullOrEmpty(Model?.Feature3Title) ? "Uygun Fiyat" : Model.Feature3Title)</h4>
+                            @(string.IsNullOrEmpty(Model?.Feature3Text) ? "Minimum maliyetle maksimum kalite." : Model.Feature3Text)
+                        </div>
+                    </div>
+                    <div class="box-icon s2 d-invert p-small mb20 wow fadeInLeft">
+                        <i class="fa bg-color fa-map-pin"></i>
+                        <div class="d-inner">
+                            <h4>@(string.IsNullOrEmpty(Model?.Feature4Title) ? "Ücretsiz Transfer" : Model.Feature4Title)</h4>
+                            @(string.IsNullOrEmpty(Model?.Feature4Text) ? "Havaalanı + şehir içi teslimat ücretsiz." : Model.Feature4Text)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="image-container col-md-6 pull-right"
+             data-bgimage="url(/quarter/images/background/5.jpg) center">
+        </div>
+    </section>
+
+    <section class="text-light jarallax">
+        <img src="/quarter/images/background/2.jpg" class="jarallax-img" alt="Arka Plan Görseli">
+        <div class="container">
+            <div class="row g-5">
+                <div class="col-lg-6 wow fadeInRight">
+                    <h2>@(string.IsNullOrEmpty(Model?.BannerTitle) ? "Müşterilerimize her durum için geniş bir yelpazede araçlar sunuyoruz." : Model.BannerTitle)</h2>
+                </div>
+                <div class="col-lg-6 wow fadeInLeft">
+                    @(string.IsNullOrEmpty(Model?.BannerText) ? "Araç kiralama acentamızda, bütçesi ne olursa olsun herkesin güvenilir ve konforlu bir araç kullanmanın keyfini çıkarmayı hak ettiğine inanıyoruz." : Model.BannerText)
+                </div>
+            </div>
+            <div class="spacer-double"></div>
+            <div class="row text-center">
+                <div class="col-md-3 col-sm-6 mb-sm-30">
+                    <div class="de_count transparent text-light wow fadeInUp">
+                        <h3 class="timer" data-to="@(Model?.CompletedOrders ?? 15425)" data-speed="3000">0</h3>
+                        Tamamlanmış Sipariş
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 mb-sm-30">
+                    <div class="de_count transparent text-light wow fadeInUp">
+                        <h3 class="timer" data-to="@(Model?.HappyCustomers ?? 8745)" data-speed="3000">0</h3>
+                        Mutlu Müşteri
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 mb-sm-30">
+                    <div class="de_count transparent text-light wow fadeInUp">
+                        <h3 class="timer" data-to="@(Model?.CarFleet ?? 235)" data-speed="3000">0</h3>
+                        Araç Filosu
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 mb-sm-30">
+                    <div class="de_count transparent text-light wow fadeInUp">
+                        <h3 class="timer" data-to="@(Model?.YearsExperience ?? 15)" data-speed="3000">0</h3>
+                        Yıllık Deneyim
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

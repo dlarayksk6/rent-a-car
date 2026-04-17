@@ -1,0 +1,175 @@
+﻿@inject IPermissionService PermissionService
+@using RentACar.Business.Abstract
+@{
+    var userPermissions = await PermissionService.GetCurrentUserPermissionsAsync();
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@ViewBag.Title - RentACar</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/adminlte/bower_components/font-awesome/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="~/adminlte/bower_components/Ionicons/css/ionicons.min.css" />
+    <link rel="stylesheet" href="~/adminlte/dist/css/AdminLTE.min.css" />
+    <link rel="stylesheet" href="~/adminlte/dist/css/skins/_all-skins.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.5/main.min.css" />
+    <style>
+        .fc {
+            background: white;
+            border-radius: 10px;
+            padding: 8px;
+        }
+    </style>
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+    <div class="wrapper">
+
+        <header class="main-header">
+            <a href="/" class="logo">
+                <span class="logo-lg"><b>Rent</b>ACar</span>
+            </a>
+            <nav class="navbar navbar-static-top">
+                <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+                    <span class="sr-only">Toggle navigation</span>
+                </a>
+                <div class="navbar-custom-menu">
+                    <ul class="nav navbar-nav">
+                        <li class="dropdown user user-menu">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <img src="~/adminlte/dist/img/user2-160x160.jpg" class="user-image" />
+                                <span>@User.Identity.Name</span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li class="user-header">
+                                    <img src="~/adminlte/dist/img/user2-160x160.jpg" class="img-circle" />
+                                    <p>@User.Identity.Name - @(User.IsInRole("Admin") ? "Admin" : "Personel")</p>
+                                </li>
+                                <li class="user-footer">
+                                    <div class="pull-left">
+                                        <a href="/Identity/Account/Manage" class="btn btn-default btn-flat">Profil</a>
+                                    </div>
+                                    <div class="pull-right">
+                                        <form method="post" asp-area="Identity" asp-page="/Account/Logout">
+                                            <button type="submit" class="btn btn-default btn-flat">Çıkış</button>
+                                        </form>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            <style>
+                .content-wrapper {
+                    overflow-x: auto !important;
+                }
+
+                .table-responsive {
+                    overflow-x: auto !important;
+                    -webkit-overflow-scrolling: touch;
+                }
+
+                body {
+                    overflow-x: hidden;
+                }
+            </style>
+        </header>
+
+        <aside class="main-sidebar">
+            <section class="sidebar">
+                <ul class="sidebar-menu" data-widget="tree">
+                    <li class="header">MENÜ</li>
+                    <li><a href="/Home"><i class="fa fa-home"></i> <span>Ana Sayfa</span></a></li>
+
+                    <li><a href="/Dashboard"><i class="fa fa-dashboard"></i> <span>Araç Galerisi</span></a></li>
+
+                    @if (userPermissions.Any(p => p.StartsWith("Cars.")) || User.IsInRole("Admin"))
+                    {
+                        <li><a href="/Cars"><i class="fa fa-car"></i> <span>Araç Yönetimi</span></a></li>
+                    }
+
+                    @if (userPermissions.Any(p => p.StartsWith("Reservations.")) || User.IsInRole("Admin"))
+                    {
+                        <li><a href="/Reservations"><i class="fa fa-book"></i> <span>Rezervasyon Yönetimi</span></a></li>
+                    }
+
+                    @if (userPermissions.Any(p => p.StartsWith("Blog.")) || User.IsInRole("Admin"))
+                    {
+                        <li><a href="/Blog"><i class="fa fa-file-text"></i> <span>Blog Yönetimi</span></a></li>
+                    }
+
+                    @if (userPermissions.Any(p => p.StartsWith("Campaigns.")) || User.IsInRole("Admin"))
+                    {
+                        <li><a href="/Campaigns"><i class="fa fa-bullhorn"></i> <span>Kampanya Yönetimi</span></a></li>
+                    }
+
+                    @if (userPermissions.Any(p => p.StartsWith("Contracts.")) || User.IsInRole("Admin"))
+                    {
+                        <li><a href="/Contracts"><i class="fa fa-file-text"></i> <span>Sözleşme Yönetimi</span></a></li>
+                    }
+
+                    @if (userPermissions.Any(p => p.StartsWith("Brands.")) || User.IsInRole("Admin"))
+                    {
+                        <li><a href="/Brands"><i class="fa fa-trademark"></i> <span>Marka Yönetimi</span></a></li>
+                    }
+
+                    @if (userPermissions.Any(p => p.StartsWith("Locations.")) || User.IsInRole("Admin"))
+                    {
+                        <li><a href="/Locations"><i class="fa fa-map-marker"></i> <span>Lokasyon Yönetimi</span></a></li>
+                    }
+
+                    @if (userPermissions.Contains("Users.Manage") || User.IsInRole("Admin"))
+                    {
+                        <li><a href="/Users"><i class="fa fa-users"></i> <span>Personel Yönetimi</span></a></li>
+                    }
+
+                    @if (userPermissions.Contains("Home.Edit") || User.IsInRole("Admin"))
+                    {
+                        <li><a href="/AdminHome"><i class="fa fa-pencil"></i> <span>Ana Sayfa Düzenleme</span></a></li>
+                    }
+
+                    @if (userPermissions.Contains("About.Edit") || User.IsInRole("Admin"))
+                    {
+                        <li><a href="/About"><i class="fa fa-info-circle"></i> <span>Hakkımızda Yönetimi</span></a></li>
+                    }
+
+                    @if (userPermissions.Contains("Contact.Edit") || User.IsInRole("Admin"))
+                    {
+                        <li><a href="/Contact/Index"><i class="fa fa-envelope"></i> <span>İletişim Bilgileri</span></a></li>
+                    }
+                </ul>
+            </section>
+        </aside>
+
+        <div class="content-wrapper">
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success alert-dismissible" style="margin:15px;">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <i class="fa fa-check"></i> @TempData["Success"]
+                </div>
+            }
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible" style="margin:15px;">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <i class="fa fa-warning"></i> @TempData["Error"]
+                </div>
+            }
+            @RenderBody()
+        </div>
+
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.5/main.min.js"></script>
+    <script src="~/adminlte/dist/js/adminlte.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

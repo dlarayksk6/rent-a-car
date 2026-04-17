@@ -1,0 +1,56 @@
+﻿@model RentACar.DTOs.Location.LocationUpdateDto
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Lokasyon Güncelle";
+}
+<section class="content-header">
+    <h1>Lokasyon Güncelle</h1>
+</section>
+<section class="content">
+    <form asp-action="Edit" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="LocationId" />
+        <div class="box box-primary">
+            <div class="box-body">
+                <div class="form-group">
+                    <label>Lokasyon Adı <span class="text-danger">*</span></label>
+                    <input asp-for="Name" class="form-control" placeholder="Örn: Trabzon Havalimanı" />
+                    <span asp-validation-for="Name" class="text-danger small"></span>
+                </div>
+                <div class="form-group">
+                    <label>Adres</label>
+                    <input asp-for="Address" class="form-control" placeholder="Tam adres" />
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>
+                                <input asp-for="IsPickup" type="checkbox" /> Alış Noktası
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>
+                                <input asp-for="IsDropoff" type="checkbox" /> Bırakış Noktası
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>
+                                <input asp-for="IsActive" type="checkbox" /> Aktif
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="box-footer">
+                <a href="/Locations" class="btn btn-default">İptal</a>
+                <button type="submit" class="btn btn-success pull-right">
+                    <i class="fa fa-save"></i> Güncelle
+                </button>
+            </div>
+        </div>
+    </form>
+</section>

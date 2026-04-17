@@ -1,0 +1,120 @@
+﻿@model List<RentACar.DTOs.Car.CarListDto>
+@inject IPermissionService PermissionService
+@{
+    var userPermissions = await PermissionService.GetCurrentUserPermissionsAsync();
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Araç Galerisi";
+    var selected = ViewBag.SelectedCategory as string;
+    var categories = ViewBag.Categories as List<string>;
+}
+
+<section class="content-header">
+    <h1><i class="fa fa-car"></i> Araç Galerisi </h1>
+</section>
+
+<section class="content">
+
+
+    <div class="nav-tabs-custom" style="margin-bottom:20px;">
+        <ul class="nav nav-tabs">
+            @foreach (var cat in categories)
+            {
+                <li class="@(cat == selected ? "active" : "")">
+                    <a href="@Url.Action("Index", "Dashboard", new { category = cat })" style="font-weight:600;">
+                        <i class="fa fa-car"></i>   @cat Sınıfı   
+                    </a>
+                </li>
+            }
+        </ul>
+    </div>
+
+    @if (Model.Any())
+    {
+        <div class="row">
+            @foreach (var car in Model)
+            {
+                <div class="col-sm-6 col-md-4 col-lg-3" style="margin-bottom:20px;">
+                    <div class="box" style="border-radius:10px; overflow:hidden; border:none; box-shadow:0 2px 10px rgba(0,0,0,0.1);">
+
+                        
+                        <div style="position:relative;">
+                            <img src="@(string.IsNullOrEmpty(car.ImageUrl) ? "/images/default-car.png" : car.ImageUrl)"
+                                 style="width:100%; height:160px; object-fit:cover;" />
+                            <div style="position:absolute; top:8px; right:8px;">
+                                <span class="label @(car.Status ? "label-success" : "label-danger")" style="font-size:11px; padding:4px 8px;">
+                                    <i class="fa @(car.Status ? "fa-check" : "fa-times")"></i>
+                                    @(car.Status ? "Uygun" : "Rezerve")
+                                </span>
+                            </div>
+                            <div style="position:absolute; bottom:0; left:0; right:0; background:linear-gradient(transparent,rgba(0,0,0,0.7)); padding:10px;">
+                                <h4 style="color:white; margin:0; font-size:15px;">@car.Brand @car.Model</h4>
+                                <small style="color:#ddd;">@car.Year • @car.Color</small>
+                            </div>
+                        </div>
+
+                        <div class="box-body" style="padding:12px;">
+                            <div class="row" style="margin:0 0 8px 0;">
+                                <div class="col-xs-6" style="padding:2px 4px;">
+                                    <small class="text-muted"><i class="fa fa-id-card"></i> Plaka</small><br />
+                                    <strong style="font-size:13px;">@car.PlateNumber</strong>
+                                </div>
+                                <div class="col-xs-6" style="padding:2px 4px;">
+                                    <small class="text-muted"><i class="fa fa-tag"></i> Sınıf</small><br />
+                                    <strong style="font-size:13px;">@car.Category</strong>
+                                </div>
+                            </div>
+                            <div class="row" style="margin:0 0 8px 0;">
+                                <div class="col-xs-6" style="padding:2px 4px;">
+                                    <small class="text-muted"><i class="fa fa-tint"></i> Yakıt</small><br />
+                                    <strong style="font-size:13px;">@car.FuelType</strong>
+                                </div>
+                                <div class="col-xs-6" style="padding:2px 4px;">
+                                    <small class="text-muted"><i class="fa fa-cogs"></i> Vites</small><br />
+                                    <strong style="font-size:13px;">@car.Transmission</strong>
+                                </div>
+                            </div>
+                            <div class="row" style="margin:0 0 10px 0;">
+                                <div class="col-xs-6" style="padding:2px 4px;">
+                                    <small class="text-muted"><i class="fa fa-user"></i> Min. Yaş</small><br />
+                                    <strong style="font-size:13px;">@car.MinAge</strong>
+                                </div>
+                                <div class="col-xs-6" style="padding:2px 4px;">
+                                    <small class="text-muted"><i class="fa fa-id-badge"></i> Ehliyet</small><br />
+                                    <strong style="font-size:13px;">@car.MinDriverLicenseYear yıl</strong>
+                                </div>
+                            </div>
+
+                            
+                            <div style="background:#f8f9fa; border-radius:6px; padding:8px; text-align:center; margin-bottom:10px;">
+                                <span style="font-size:22px; font-weight:bold; color:#00a65a;">@car.DailyPrice.ToString("N0") ₺</span>
+                                <span class="text-muted" style="font-size:12px;"> / gün</span>
+                            </div>
+
+                       
+                            <div class="btn-group btn-group-justified">
+                                <a href="/Reservations/Calendar?carId=@car.CarId" class="btn btn-primary btn-sm">
+                                    <i class="fa fa-calendar"></i> Takvim
+                                </a>
+                                @if (userPermissions.Contains("Reservations.Create") || User.IsInRole("Admin"))
+                                {
+                                    <a href="/Dashboard/BlockDates?carId=@car.CarId" class="btn btn-warning btn-sm">
+                                        <i class="fa fa-lock"></i> Bloke
+                                    </a>
+                                }
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="text-center" style="padding:60px 0; color:#aaa;">
+            <i class="fa fa-car" style="font-size:60px;"></i>
+            <h3>Bu sınıfta araç bulunamadı.</h3>
+        </div>
+    }
+
+</section>

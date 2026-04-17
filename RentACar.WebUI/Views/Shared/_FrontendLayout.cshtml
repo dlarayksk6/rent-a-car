@@ -1,0 +1,72 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@ViewBag.Title - Rentaly</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.5/main.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="/quarter/css/style.css" />
+    <link rel="stylesheet" href="/quarter/css/coloring.css" />
+    <link rel="stylesheet" href="/quarter/css/colors/scheme-01.css" />
+</head>
+<body>
+    <div id="de-preloader"></div>
+    <div id="wrapper">
+        @Html.Partial("_FrontendNavbar")
+        <div class="main-content">
+            @RenderBody()
+        </div>
+        @Html.Partial("_FrontendFooter")
+    </div>
+
+    <!-- JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+    <script src="/quarter/js/plugins.js"></script>
+    <script src="/quarter/js/designesia.js"></script>
+    <!-- Google Translate -->
+    <div id="google_translate_element" style="display:none"></div>
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'tr',
+                includedLanguages: 'en,ar',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                autoDisplay: false
+            }, 'google_translate_element');
+        }
+
+              function changeLanguage(lang) {
+            var tryChange = function() {
+                var link = document.querySelector('.VIpgJd-ZVi9od-xl07Ob-lTBxed');
+                if (link) {
+                    link.click();
+                    setTimeout(function() {
+                        var items = document.querySelectorAll('.VIpgJd-ZVi9od-XwIbZc-OEVmcd');
+                        items.forEach(function(item) {
+                            if (item.getAttribute('value') === lang ||
+                                item.innerText.toLowerCase().includes(lang === 'en' ? 'english' : lang === 'ar' ? 'arabic' : 'turkish')) {
+                                item.click();
+                            }
+                        });
+                    }, 500);
+                } else {
+                    setTimeout(tryChange, 300);
+                }
+            };
+            tryChange();
+        }
+    </script>
+    <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

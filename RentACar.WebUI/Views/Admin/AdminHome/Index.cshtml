@@ -1,0 +1,166 @@
+﻿@model RentACar.DTOs.About.AboutUpdateDto
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Ana Sayfa Düzenleme";
+}
+<section class="content-header">
+    <h1>Ana Sayfa İçerik Yönetimi</h1>
+</section>
+<section class="content">
+
+
+    <form asp-action="Update" method="post">
+        <input type="hidden" asp-for="AboutContentId" />
+
+        <div class="box box-primary">
+            <div class="box-header with-border">
+                <h3 class="box-title"><i class="fa fa-image"></i> Hero Bölümü</h3>
+            </div>
+            <div class="box-body">
+                <div class="form-group">
+                    <label>Ana Başlık</label>
+                    <input asp-for="HeroTitle" class="form-control"
+                           placeholder="@(string.IsNullOrEmpty(Model?.HeroTitle) ? "Konforlu Araçlarla Güvenli Yolculuk" : Model.HeroTitle)" />
+                </div>
+                <div class="form-group">
+                    <label>Alt Metin</label>
+                    <textarea asp-for="HeroSubText" class="form-control" rows="2"
+                              placeholder="@(string.IsNullOrEmpty(Model?.HeroSubText) ? "İster iş, ister tatil… Modern ve bakımlı araç filomuzla yolculuğunuzun keyfini çıkarın." : Model.HeroSubText)"></textarea>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Özellik 1 Başlık</label>
+                            <input asp-for="HeroFeature1Title" class="form-control"
+                                   placeholder="@(string.IsNullOrEmpty(Model?.HeroFeature1Title) ? "Birinci Sınıf Hizmet" : Model.HeroFeature1Title)" />
+                        </div>
+                        <div class="form-group">
+                            <label>Özellik 1 Metin</label>
+                            <input asp-for="HeroFeature1Text" class="form-control"
+                                   placeholder="@(string.IsNullOrEmpty(Model?.HeroFeature1Text) ? "Profesyonel hizmet, kaliteli araçlar ve hızlı teslimat." : Model.HeroFeature1Text)" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Özellik 2 Başlık</label>
+                            <input asp-for="HeroFeature2Title" class="form-control"
+                                   placeholder="@(string.IsNullOrEmpty(Model?.HeroFeature2Title) ? "7/24 Yol Yardım" : Model.HeroFeature2Title)" />
+                        </div>
+                        <div class="form-group">
+                            <label>Özellik 2 Metin</label>
+                            <input asp-for="HeroFeature2Text" class="form-control"
+                                   placeholder="@(string.IsNullOrEmpty(Model?.HeroFeature2Text) ? "Olası durumlarda her zaman yanınızdayız." : Model.HeroFeature2Text)" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="box box-success">
+            <div class="box-header with-border">
+                <h3 class="box-title"><i class="fa fa-star"></i> Özellikler Bölümü</h3>
+            </div>
+            <div class="box-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Özellik 1 Başlık</label>
+                            <input asp-for="Feature1Title" class="form-control"
+                                   placeholder="@(string.IsNullOrEmpty(Model?.Feature1Title) ? "Birinci Sınıf Hizmetler" : Model.Feature1Title)" />
+                        </div>
+                        <div class="form-group">
+                            <label>Özellik 1 Metin</label>
+                            <input asp-for="Feature1Text" class="form-control"
+                                   placeholder="@(string.IsNullOrEmpty(Model?.Feature1Text) ? "Lüksün olağanüstü bakımla buluştuğu hizmet." : Model.Feature1Text)" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Özellik 2 Başlık</label>
+                            <input asp-for="Feature2Title" class="form-control"
+                                   placeholder="@(string.IsNullOrEmpty(Model?.Feature2Title) ? "7/24 Yol Yardımı" : Model.Feature2Title)" />
+                        </div>
+                        <div class="form-group">
+                            <label>Özellik 2 Metin</label>
+                            <input asp-for="Feature2Text" class="form-control"
+                                   placeholder="@(string.IsNullOrEmpty(Model?.Feature2Text) ? "En çok ihtiyacınız olduğunda güvenilir destek." : Model.Feature2Text)" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Özellik 3 Başlık</label>
+                            <input asp-for="Feature3Title" class="form-control"
+                                   placeholder="@(string.IsNullOrEmpty(Model?.Feature3Title) ? "Minimum Maliyetle Kalite" : Model.Feature3Title)" />
+                        </div>
+                        <div class="form-group">
+                            <label>Özellik 3 Metin</label>
+                            <input asp-for="Feature3Text" class="form-control"
+                                   placeholder="@(string.IsNullOrEmpty(Model?.Feature3Text) ? "Maksimum değer için maliyetleri en aza indirirken mükemmellik." : Model.Feature3Text)" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Özellik 4 Başlık</label>
+                            <input asp-for="Feature4Title" class="form-control"
+                                   placeholder="@(string.IsNullOrEmpty(Model?.Feature4Title) ? "Ücretsiz Alış & Bırakış" : Model.Feature4Title)" />
+                        </div>
+                        <div class="form-group">
+                            <label>Özellik 4 Metin</label>
+                            <input asp-for="Feature4Text" class="form-control"
+                                   placeholder="@(string.IsNullOrEmpty(Model?.Feature4Text) ? "Ücretsiz araç teslim alma ve bırakma hizmetleri." : Model.Feature4Text)" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="box box-warning">
+            <div class="box-header with-border">
+                <h3 class="box-title"><i class="fa fa-bar-chart"></i> Banner & İstatistikler</h3>
+            </div>
+            <div class="box-body">
+                <div class="form-group">
+                    <label>Banner Başlık</label>
+                    <textarea asp-for="BannerTitle" class="form-control" rows="2"
+                              placeholder="@(string.IsNullOrEmpty(Model?.BannerTitle) ? "Müşterilerimize her durum için geniş bir yelpazede araçlar sunuyoruz." : Model.BannerTitle)"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Banner Metin</label>
+                    <textarea asp-for="BannerText" class="form-control" rows="3"
+                              placeholder="@(string.IsNullOrEmpty(Model?.BannerText) ? "Araç kiralama hakkında açıklama..." : Model.BannerText)"></textarea>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Tamamlanan Sipariş</label>
+                            <input asp-for="CompletedOrders" class="form-control" type="number" placeholder="15425" />
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Mutlu Müşteri</label>
+                            <input asp-for="HappyCustomers" class="form-control" type="number" placeholder="8745" />
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Araç Filosu</label>
+                            <input asp-for="CarFleet" class="form-control" type="number" placeholder="235" />
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Yıllık Deneyim</label>
+                            <input asp-for="YearsExperience" class="form-control" type="number" placeholder="15" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="box-footer">
+                <button type="submit" class="btn btn-success">
+                    <i class="fa fa-save"></i> Kaydet
+                </button>
+            </div>
+        </div>
+    </form>
+</section>

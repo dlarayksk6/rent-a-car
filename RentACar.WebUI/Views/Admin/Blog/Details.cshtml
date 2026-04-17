@@ -1,0 +1,40 @@
+﻿@model RentACar.DTOs.Blog.BlogListDto
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="content-header">
+    <h1>@Model.Title</h1>
+</section>
+
+<section class="content">
+
+    <div class="box box-primary">
+        <div class="box-body">
+
+            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+            {
+                <img src="@Model.ImageUrl" class="img-responsive" style="margin-bottom:20px; max-height:350px; object-fit:cover;" />
+            }
+
+            <p style="font-size:16px; white-space:pre-line;">
+                @Model.Content
+            </p>
+
+            <hr />
+
+            <p><strong>Oluşturulma:</strong> @Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")</p>
+
+            @if (Model.UpdatedAt != null)
+            {
+                <p><strong>Güncelleme:</strong> @Model.UpdatedAt?.ToString("dd.MM.yyyy HH:mm")</p>
+            }
+
+            <a href="/Blog" class="btn btn-default">
+                <i class="fa fa-arrow-left"></i> Geri Dön
+            </a>
+
+        </div>
+    </div>
+
+</section>

@@ -1,0 +1,227 @@
+﻿@model RentACar.DTOs.Reservation.ReservationListDto
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Rezervasyon Detayı #" + Model.ReservationId;
+    var statusColor = Model.Status == "Onaylı" ? "success" :
+                      Model.Status == "Beklemede" ? "warning" :
+                      Model.Status == "Tamamlandı" ? "primary" :
+                      Model.Status == "Kapora Alındı" ? "info" :
+                      Model.Status == "Ödendi" ? "primary" :
+                      Model.Status == "İptal" ? "danger" : "default";
+}
+
+<section class="content-header">
+    <h1>
+        Rezervasyon Detayı
+        <small>#@Model.ReservationId</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="/Reservations"><i class="fa fa-book"></i> Rezervasyonlar</a></li>
+        <li class="active">Detay #@Model.ReservationId</li>
+    </ol>
+</section>
+
+<section class="content">
+
+    <div class="row">
+
+        <div class="col-md-8">
+
+        
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <h3 class="box-title"><i class="fa fa-info-circle"></i> Rezervasyon</h3>
+                            <div class="box-tools pull-right">
+                                <span class="label label-@statusColor">@Model.Status</span>
+                            </div>
+                        </div>
+                        <div class="box-body">
+                            <ul class="list-unstyled" style="line-height:2;">
+                                <li><i class="fa fa-hashtag text-muted"></i> <strong>#@Model.ReservationId</strong></li>
+                                <li><i class="fa fa-calendar text-green"></i> @Model.StartDate.ToString("dd.MM.yyyy HH:mm")</li>
+                                <li><i class="fa fa-calendar-times-o text-red"></i> @Model.EndDate.ToString("dd.MM.yyyy HH:mm")</li>
+                                <li><i class="fa fa-clock-o text-blue"></i> @((Model.EndDate - Model.StartDate).Days + 1) gün</li>
+                                <li><i class="fa fa-money text-green"></i> <strong>@Model.TotalPrice.ToString("N0") ₺</strong></li>
+                                <li>
+                                    <i class="fa fa-credit-card text-blue"></i>
+                                    @if (Model.IsPaid)
+                                    {
+                                        <span class="label label-success">✓ Ödendi</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="label label-warning">Ödeme Bekliyor</span>
+                                    }
+                                </li>
+                                @if (!string.IsNullOrEmpty(Model.PickupLocation))
+                                {
+                                    <li><i class="fa fa-map-marker text-red"></i> Alış: @Model.PickupLocation</li>
+                                }
+                                @if (!string.IsNullOrEmpty(Model.DropoffLocation))
+                                {
+                                    <li><i class="fa fa-map-marker text-blue"></i> Bırakış: @Model.DropoffLocation</li>
+                                }
+                                @if (!string.IsNullOrEmpty(Model.Notes))
+                                {
+                                    <li><i class="fa fa-sticky-note text-yellow"></i> @Model.Notes</li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                @if (!Model.IsAdminBlocked)
+                {
+                    <div class="col-sm-6">
+                        <div class="box box-info">
+                            <div class="box-header with-border">
+                                <h3 class="box-title"><i class="fa fa-user"></i> Müşteri</h3>
+                            </div>
+                            <div class="box-body text-center">
+                                <i class="fa fa-user-circle" style="font-size:50px; color:#aaa; margin-bottom:10px;"></i>
+                                <h4 style="margin:5px 0;">@Model.FullName</h4>
+                                <p>
+                                    <a href="tel:@Model.PhoneNumber" class="btn btn-sm btn-success">
+                                        <i class="fa fa-phone"></i> @Model.PhoneNumber
+                                    </a>
+                                </p>
+                                <p class="text-muted"><small>TC: @Model.NationalId</small></p>
+                                <p class="text-muted"><small>Kayıt: @Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")</small></p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+          
+            <div class="box box-warning">
+                <div class="box-header with-border">
+                    <h3 class="box-title"><i class="fa fa-refresh"></i> Durum Güncelle</h3>
+                </div>
+                <div class="box-body">
+                    <div class="row">
+                        @if (Model.Status != "Onaylı" && Model.Status != "İptal")
+                        {
+                            <div class="col-xs-6 col-sm-4" style="margin-bottom:8px;">
+                                <button onclick="updateStatus('Onaylı')" class="btn btn-success btn-block">
+                                    <i class="fa fa-check"></i> Onayla
+                                </button>
+                            </div>
+                        }
+                        @if (Model.Status != "Kapora Alındı" && Model.Status != "İptal")
+                        {
+                            <div class="col-xs-6 col-sm-4" style="margin-bottom:8px;">
+                                <button onclick="updateStatus('Kapora Alındı')" class="btn btn-info btn-block">
+                                    <i class="fa fa-credit-card"></i> Kapora Alındı
+                                </button>
+                            </div>
+                        }
+                        @if (Model.Status != "Ödendi" && Model.Status != "İptal")
+                        {
+                            <div class="col-xs-6 col-sm-4" style="margin-bottom:8px;">
+                                <button onclick="updateStatus('Ödendi')" class="btn btn-primary btn-block">
+                                    <i class="fa fa-money"></i> Ödendi
+                                </button>
+                            </div>
+                        }
+                        @if (Model.Status != "Tamamlandı" && Model.Status != "İptal")
+                        {
+                            <div class="col-xs-6 col-sm-4" style="margin-bottom:8px;">
+                                <button onclick="updateStatus('Tamamlandı')" class="btn btn-block"
+                                        style="background:#1abc9c; color:white;">
+                                    <i class="fa fa-flag-checkered"></i> Tamamlandı
+                                </button>
+                            </div>
+                        }
+                        @if (Model.Status != "İptal")
+                        {
+                            <div class="col-xs-6 col-sm-4" style="margin-bottom:8px;">
+                                <button onclick="cancelReservation()" class="btn btn-warning btn-block">
+                                    <i class="fa fa-ban"></i> İptal Et
+                                </button>
+                            </div>
+                        }
+                        <div class="col-xs-6 col-sm-4" style="margin-bottom:8px;">
+                            <button onclick="deleteReservation()" class="btn btn-danger btn-block">
+                                <i class="fa fa-trash"></i> Sil
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+      
+        <div class="col-md-4">
+
+            <div class="box box-success">
+                <div class="box-header with-border">
+                    <h3 class="box-title"><i class="fa fa-car"></i> Araç</h3>
+                </div>
+                <div class="box-body">
+                    <img src="@(string.IsNullOrEmpty(Model.CarImageUrl) ? "/images/default-car.png" : Model.CarImageUrl)"
+                         class="img-responsive"
+                         style="max-height:160px; width:100%; object-fit:cover; border-radius:8px; margin-bottom:10px;" />
+                    <h4 class="text-center" style="color:#00a7d0; margin:5px 0;">@Model.CarBrand @Model.CarModel</h4>
+                    <p class="text-center text-muted">@Model.PlateNumber</p>
+                    <ul class="list-group list-group-unbordered">
+                        <li class="list-group-item"><b>Yıl</b><a class="pull-right">@Model.CarYear</a></li>
+                        <li class="list-group-item"><b>Renk</b><a class="pull-right">@Model.CarColor</a></li>
+                        <li class="list-group-item"><b>Kategori</b><a class="pull-right">@Model.CarCategory Sınıfı</a></li>
+                        <li class="list-group-item"><b>Yakıt</b><a class="pull-right">@Model.CarFuelType</a></li>
+                        <li class="list-group-item"><b>Vites</b><a class="pull-right">@Model.CarTransmission</a></li>
+                        <li class="list-group-item">
+                            <b>Günlük</b>
+                            <a class="pull-right text-success"><strong>@Model.CarDailyPrice.ToString("N0") ₺</strong></a>
+                        </li>
+                    </ul>
+                    <a href="/Reservations/Calendar?carId=@Model.CarId" class="btn btn-primary btn-block">
+                        <i class="fa fa-calendar"></i> Araç Takvimi
+                    </a>
+                </div>
+            </div>
+
+            <div class="box box-default">
+                <div class="box-body">
+                    <a href="/Reservations" class="btn btn-default btn-block">
+                        <i class="fa fa-arrow-left"></i> Listeye Dön
+                    </a>
+                    <a href="/Dashboard" class="btn btn-info btn-block" style="margin-top:5px;">
+                        <i class="fa fa-car"></i> Araç Galerisi
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        function updateStatus(newStatus) {
+            if (confirm('"' + newStatus + '" olarak güncellensin mi?')) {
+                $.post('/Reservations/UpdateStatus', {
+                    id: @Model.ReservationId,
+                    status: newStatus
+                }, function() { location.reload(); });
+            }
+        }
+        function cancelReservation() {
+            if (confirm('Bu rezervasyonu iptal etmek istediğinize emin misiniz?')) {
+                $.post('/Reservations/Cancel', { id: @Model.ReservationId }, function() {
+                    location.reload();
+                });
+            }
+        }
+        function deleteReservation() {
+            if (confirm('Kalıcı olarak silinsin mi?\nBu işlem geri alınamaz!')) {
+                $.post('/Reservations/Delete', { id: @Model.ReservationId }, function() {
+                    window.location.href = '/Reservations';
+                });
+            }
+        }
+    </script>
+}

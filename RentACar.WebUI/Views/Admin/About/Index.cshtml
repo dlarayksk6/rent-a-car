@@ -1,0 +1,49 @@
+﻿@model RentACar.DTOs.About.AboutUpdateDto
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Hakkımızda Yönetimi";
+}
+<section class="content-header">
+    <h1>Hakkımızda İçerik Yönetimi</h1>
+</section>
+<section class="content">
+    <form asp-action="Update" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="AboutContentId" />
+        <div class="box box-primary">
+            <div class="box-header with-border"><h3 class="box-title">Ana Bölüm</h3></div>
+            <div class="box-body">
+                <div class="form-group">
+                    <label>Başlık</label>
+                    <input asp-for="Title" class="form-control"
+                           placeholder="@(string.IsNullOrEmpty(Model?.Title) ? "Güvenilirliğin ve Konforun Tek Adresi" : Model.Title)" />
+                </div>
+                <div class="form-group">
+                    <label>Alt Başlık</label>
+                    <input asp-for="SubTitle" class="form-control"
+                           placeholder="@(string.IsNullOrEmpty(Model?.SubTitle) ? "RentACar: Yolculuğunuzun Anahtarı" : Model.SubTitle)" />
+                </div>
+                <div class="form-group">
+                    <label>Açıklama 1</label>
+                    <textarea asp-for="Description1" class="form-control" rows="3"
+                              placeholder="@(string.IsNullOrEmpty(Model?.Description1) ? "Şirket hakkında açıklama..." : Model.Description1)"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Açıklama 2</label>
+                    <textarea asp-for="Description2" class="form-control" rows="3"
+                              placeholder="@(string.IsNullOrEmpty(Model?.Description2) ? "İkinci açıklama (isteğe bağlı)..." : Model.Description2)"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Açıklama 3</label>
+                    <textarea asp-for="Description3" class="form-control" rows="3"
+                              placeholder="@(string.IsNullOrEmpty(Model?.Description3) ? "Üçüncü açıklama (isteğe bağlı)..." : Model.Description3)"></textarea>
+                </div>
+            </div>
+            <div class="box-footer">
+                <button type="submit" class="btn btn-success">
+                    <i class="fa fa-save"></i> Kaydet
+                </button>
+            </div>
+        </div>
+    </form>
+</section>

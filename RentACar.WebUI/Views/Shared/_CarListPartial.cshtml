@@ -1,0 +1,30 @@
+﻿@model List<RentACar.DTOs.Car.CarListDto>
+@foreach (var c in Model)
+{
+    <div class="col-lg-12" data-car-item>
+        <div class="de-item-list mb30">
+            <div class="d-img">
+                <img src="@c.ImageUrl" class="img-fluid" alt="">
+            </div>
+            <div class="d-info">
+                <div class="d-text">
+                    <h4>@c.Brand @c.Model (@c.Year)</h4>
+                    <div class="d-atr-group">
+                        <ul class="d-atr">
+                            <li><span>Koltuk:</span>@c.Seats</li>
+                            <li><span>Yakıt:</span>@c.FuelType</li>
+                            <li><span>Vites:</span>@c.Transmission</li>
+                            <li><span>Renk:</span>@c.Color</li>
+                            <li><span>Sınıf:</span>@c.Category</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="d-price">
+                Günlük <span>@c.DailyPrice ₺</span>
+                <a class="btn-main" href="/Site/CarDetail/@c.CarId">İncele</a>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+}

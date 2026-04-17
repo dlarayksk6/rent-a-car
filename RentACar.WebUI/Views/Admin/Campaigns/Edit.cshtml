@@ -1,0 +1,57 @@
+﻿@model RentACar.DTOs.Campaign.CampaignUpdateDto
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Kampanya Düzenle";
+}
+
+<section class="content-header">
+    <h1><i class="fa fa-edit"></i> Kampanya Düzenle</h1>
+</section>
+
+<section class="content">
+    <div class="box box-primary">
+        <div class="box-body">
+            <form method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="CampaignId" value="@Model.CampaignId" />
+              
+                <input type="hidden" name="ImageUrl" value="@Model.ImageUrl" />
+
+                <div class="form-group">
+                    <label>Başlık <span class="text-danger">*</span></label>
+                    <input name="Title" class="form-control" value="@Model.Title" required />
+                </div>
+
+                <div class="form-group">
+                    <label>Açıklama</label>
+                    <textarea name="Description" class="form-control" rows="5">@Model.Description</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Görsel</label>
+                    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                    {
+                        <div style="margin-bottom:10px;">
+                            <img src="@Model.ImageUrl" style="height:80px; border-radius:6px;" />
+                            <small class="text-muted d-block">Yeni görsel seçerseniz mevcut değişir.</small>
+                        </div>
+                    }
+                    <input type="file" name="ImageFile" class="form-control" accept="image/*" />
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" name="IsActive" value="true" @(Model.IsActive ? "checked" : "") /> Aktif
+                    </label>
+                </div>
+
+                <a href="/Campaigns/Index" class="btn btn-default">
+                    <i class="fa fa-arrow-left"></i> Geri
+                </a>
+                <button type="submit" class="btn btn-success">
+                    <i class="fa fa-save"></i> Güncelle
+                </button>
+            </form>
+        </div>
+    </div>
+</section>

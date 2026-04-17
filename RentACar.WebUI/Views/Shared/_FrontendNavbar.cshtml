@@ -1,0 +1,134 @@
+﻿@{
+    var contact = ViewBag.SiteContact as RentACar.Entities.SiteContact;
+    contact ??= new RentACar.Entities.SiteContact
+    {
+        Phone = "+00 000 000",
+        Email = "info@example.com",
+        Facebook = "#",
+        Instagram = "#",
+        Twitter = "#"
+    };
+}
+<header class="transparent scroll-light has-topbar">
+    <div id="topbar" class="topbar-dark text-light">
+        <div class="container">
+            <div class="topbar-left xs-hide">
+                <div class="topbar-widget">
+                    <div class="topbar-widget"><a href="tel:@contact.Phone"><i class="fa fa-phone"></i> @contact.Phone</a></div>
+                    <div class="topbar-widget"><a href="mailto:@contact.Email"><i class="fa fa-envelope"></i> @contact.Email</a></div>
+                    <div class="topbar-widget">
+                        <i class="fa fa-clock-o"></i> @(string.IsNullOrEmpty(contact.WorkingHours) ? "7/24 Hizmet" : contact.WorkingHours)
+                    </div>
+                </div>
+            </div>
+            <div class="topbar-right">
+                <div class="social-icons">
+                    @if (!string.IsNullOrEmpty(contact.Facebook))
+                    {
+                        <a href="@contact.Facebook" target="_blank"><i class="fa fa-facebook fa-lg"></i></a>
+                    }
+                    @if (!string.IsNullOrEmpty(contact.Twitter))
+                    {
+                        <a href="@contact.Twitter" target="_blank"><i class="fa fa-twitter fa-lg"></i></a>
+                    }
+                    @if (!string.IsNullOrEmpty(contact.Instagram))
+                    {
+                        <a href="@contact.Instagram" target="_blank"><i class="fa fa-instagram fa-lg"></i></a>
+                    }
+                    @if (!string.IsNullOrEmpty(contact.WhatsappNumber))
+                    {
+                        <a href="https://wa.me/@contact.WhatsappNumber" target="_blank"><i class="fab fa-whatsapp fa-lg"></i></a>
+                    }
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="de-flex sm-pt10">
+                    <div class="de-flex-col">
+                        <div id="logo">
+                            <a href="/Site/Index">
+                                <img class="logo-1" src="/quarter/images/logo-light.png" alt="">
+                                <img class="logo-2" src="/quarter/images/logo.png" alt="">
+                            </a>
+                        </div>
+                    </div>
+                    <div class="de-flex-col header-col-mid">
+                        <ul id="mainmenu">
+                            <li><a class="menu-item" href="/Site/Index">Ana Sayfa</a></li>
+                            <li><a class="menu-item" href="/Site/About">Hakkımızda</a></li>
+                            <li><a class="menu-item" href="/Site/Cars">Araçlar</a></li>
+                            <li><a class="menu-item" href="/Site/Blog">Blog</a></li>
+                            <li><a class="menu-item" href="/Site/Contact">İletişim</a></li>
+                            <li><a class="menu-item" href="/Site/Campaigns">Kampanyalar</a></li>
+                            <li><a class="menu-item" href="/Site/Contracts">Sözleşmeler</a></li>
+                        </ul>
+                    </div>
+                    <div class="de-flex-col">
+                        <div class="menu_side_area">
+                            <div class="lang-switcher">
+                                <a onclick="changeLanguage('tr')" title="Türkçe">TR</a>
+                                <a onclick="changeLanguage('en')" title="English">EN</a>
+                                <a onclick="changeLanguage('ar')" title="عربي">AR</a>
+                            </div>
+                            <span id="menu-btn"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<style>
+    @@media (max-width: 993px) {
+        header.menu-open {
+            height: auto !important;
+            min-height: 100vh !important;
+            overflow-y: visible !important;
+        }
+    }
+
+    @@media (max-width: 993px) {
+        #mainmenu {
+            max-height: none !important;
+            overflow-y: visible !important;
+        }
+
+            #mainmenu a {
+                pointer-events: auto;
+            }
+    }
+
+    .lang-switcher {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-right: 15px;
+    }
+
+        .lang-switcher a {
+            font-size: 22px;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.2s, transform 0.2s;
+            text-decoration: none;
+        }
+
+            .lang-switcher a:hover {
+                opacity: 1;
+                transform: scale(1.2);
+            }
+
+        .lang-switcher a {
+            color: #fff !important;
+        }
+
+    header.smaller .lang-switcher a,
+    header.scroll-light.smaller .lang-switcher a {
+        color: #333 !important;
+    }
+</style>

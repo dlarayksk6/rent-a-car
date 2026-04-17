@@ -1,0 +1,78 @@
+﻿@page
+@model LoginModel
+@{
+    Layout = null;
+    ViewData["Title"] = "Giriş Yap";
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>RentACar | Giriş Yap</title>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link rel="stylesheet" href="~/adminlte/bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/adminlte/bower_components/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="~/adminlte/dist/css/AdminLTE.min.css">
+    <link rel="stylesheet" href="~/adminlte/plugins/iCheck/square/blue.css">
+</head>
+<body class="hold-transition login-page">
+    <div class="login-box">
+        <div class="login-logo">
+            <a href="/"><b>Rent</b>ACar</a>
+        </div>
+
+        <div class="login-box-body">
+            <p class="login-box-msg">Hesabınıza giriş yapın</p>
+
+            <form id="account" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="form-group has-feedback">
+                    <input asp-for="Input.Email" class="form-control" placeholder="E-posta" autocomplete="username" />
+                    <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                    <span asp-validation-for="Input.Email" class="text-danger"></span>
+                </div>
+
+                <div class="form-group has-feedback">
+                    <input asp-for="Input.Password" class="form-control" placeholder="Şifre" autocomplete="current-password" />
+                    <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+                    <span asp-validation-for="Input.Password" class="text-danger"></span>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-8">
+                        <div class="checkbox icheck">
+                            <label>
+                                <input asp-for="Input.RememberMe" type="checkbox" /> Beni Hatırla
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-xs-4">
+                        <button type="submit" class="btn btn-primary btn-block btn-flat">Giriş</button>
+                    </div>
+                </div>
+            </form>
+
+            <a href="./ForgotPassword">Şifremi unuttum</a>
+        </div>
+    </div>
+
+    <script src="~/adminlte/bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="~/adminlte/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="~/adminlte/plugins/iCheck/icheck.min.js"></script>
+    <script>
+        $(function () {
+            $('input').iCheck({
+                checkboxClass: 'icheckbox_square-blue',
+                radioClass: 'iradio_square-blue',
+                increaseArea: '20%'
+            });
+        });
+    </script>
+</body>
+</html>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

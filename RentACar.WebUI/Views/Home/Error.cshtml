@@ -1,0 +1,22 @@
+﻿@{
+    Layout = "~/Views/Shared/_FrontendLayout.cshtml";
+    ViewBag.Title = "Hata";
+}
+
+<div class="no-bottom no-top" id="content">
+    <section class="full-height vertical-center text-center">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 offset-lg-3">
+                    <h1 style="font-size: 100px; font-weight: 700; color: #e74c3c;">
+                        @ViewBag.StatusCode
+                    </h1>
+                    <h3>@ViewBag.Message</h3>
+                    <p class="text-muted">Bir sorun oluştu. Ana sayfaya dönerek tekrar deneyebilirsiniz.</p>
+                    <div class="spacer-20"></div>
+                    <a href="/Site/Index" class="btn-main">Ana Sayfaya Dön</a>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

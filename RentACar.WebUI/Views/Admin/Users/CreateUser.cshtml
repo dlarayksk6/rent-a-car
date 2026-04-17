@@ -1,0 +1,140 @@
+﻿@model RentACar.DTOs.User.UserCreateDto
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Personel Ekle";
+    var permissions = ViewBag.Permissions as List<RentACar.Entities.Permission>;
+
+    var groups = new Dictionary<string, List<(string Code, string Name, int Id)>>
+    {
+        ["Araçlar"] = new(),
+        ["Rezervasyonlar"] = new(),
+        ["Blog"] = new(),
+        ["Kampanyalar"] = new(),
+        ["Sözleşmeler"] = new(),
+        ["Markalar"] = new(),
+        ["Lokasyonlar"] = new(),
+        ["Kullanıcılar"] = new(),
+        ["Diğer"] = new(),
+    };
+
+    foreach (var permission in permissions)
+    {
+        var item = (permission.Code, permission.Name, permission.Id);
+        if (permission.Code.StartsWith("Cars.")) groups["Araçlar"].Add(item);
+        else if (permission.Code.StartsWith("Reservations.")) groups["Rezervasyonlar"].Add(item);
+        else if (permission.Code.StartsWith("Blog.")) groups["Blog"].Add(item);
+        else if (permission.Code.StartsWith("Campaigns.")) groups["Kampanyalar"].Add(item);
+        else if (permission.Code.StartsWith("Contracts.")) groups["Sözleşmeler"].Add(item);
+        else if (permission.Code.StartsWith("Brands.")) groups["Markalar"].Add(item);
+        else if (permission.Code.StartsWith("Locations.")) groups["Lokasyonlar"].Add(item);
+        else if (permission.Code.StartsWith("Users.")) groups["Kullanıcılar"].Add(item);
+        else groups["Diğer"].Add(item);
+    }
+}
+
+<section class="content-header">
+    <h1>Personel Ekle</h1>
+</section>
+<section class="content">
+    <div class="box box-primary">
+        <form asp-action="CreateUser" method="post">
+            @Html.AntiForgeryToken()
+            <div class="box-body">
+                <div class="form-group">
+                    <label>Email <span class="text-danger">*</span></label>
+                    <input asp-for="Email" class="form-control" placeholder="ornek@email.com" />
+                    <span asp-validation-for="Email" class="text-danger small"></span>
+                </div>
+                <div class="form-group">
+                    <label>Şifre <span class="text-danger">*</span></label>
+                    <input asp-for="Password" type="password" class="form-control" />
+                    <span asp-validation-for="Password" class="text-danger small"></span>
+                    <small class="text-muted">En az 6 karakter, büyük harf, küçük harf ve rakam içermelidir.</small>
+                </div>
+                <div class="form-group">
+                    <label>Yetkiler</label>
+                    <div class="row">
+                        @foreach (var group in groups.Where(g => g.Value.Count > 0))
+                        {
+                            <div class="col-md-4" style="margin-bottom: 15px;">
+                                <div style="border: 1px solid #ddd; border-radius: 6px; padding: 10px;">
+                                    <div style="display: flex; align-items: center; margin-bottom: 8px; border-bottom: 1px solid #eee; padding-bottom: 6px;">
+                                        <input type="checkbox" class="group-check" data-group="@group.Key"
+                                               style="margin-right: 8px;" />
+                                        <strong>@group.Key</strong>
+                                    </div>
+                                    @foreach (var perm in group.Value)
+                                    {
+                                        <label style="display: block; margin-bottom: 6px;">
+                                            <input type="checkbox" name="SelectedPermissions" value="@perm.Id"
+                                                   class="perm-check" data-group="@group.Key" data-code="@perm.Code" />
+                                            @perm.Name
+                                        </label>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="box-footer">
+                <button type="submit" class="btn btn-success">
+                    <i class="fa fa-save"></i> Kaydet
+                </button>
+                <a href="@Url.Action("Index")" class="btn btn-default">
+                    <i class="fa fa-times"></i> İptal
+                </a>
+            </div>
+        </form>
+    </div>
+</section>
+
+<script>
+    document.querySelectorAll('.group-check').forEach(function(groupCb) {
+        var group = groupCb.dataset.group;
+        var children = document.querySelectorAll('.perm-check[data-group="' + group + '"]');
+
+        groupCb.addEventListener('change', function() {
+            children.forEach(c => c.checked = this.checked);
+        });
+
+        children.forEach(function(child) {
+            child.addEventListener('change', function() {
+                var allChecked = Array.from(children).every(c => c.checked);
+                var anyChecked = Array.from(children).some(c => c.checked);
+                groupCb.checked = allChecked;
+                groupCb.indeterminate = !allChecked && anyChecked;
+            });
+        });
+    });
+
+      const dependencies = {
+        'Cars.Manage': 'Cars.View',
+        'Cars.Delete': 'Cars.View',
+        'Reservations.Manage': 'Reservations.View',
+        'Reservations.Delete': 'Reservations.View',
+        'Reservations.Approve': 'Reservations.View',
+        'Reservations.Cancel': 'Reservations.View',
+        'Blog.Manage': 'Blog.View',
+        'Blog.Delete': 'Blog.View',
+        'Blog.Approve': 'Blog.View',
+        'Campaigns.Manage': 'Campaigns.View',
+        'Campaigns.Delete': 'Campaigns.View',
+        'Contracts.Manage': 'Contracts.View',
+        'Contracts.Delete': 'Contracts.View',
+        'Brands.Manage': 'Brands.View',
+        'Brands.Delete': 'Brands.View',
+        'Locations.Manage': 'Locations.View',
+        'Locations.Delete': 'Locations.View',
+    };
+
+    document.querySelectorAll('.perm-check').forEach(function(cb) {
+        cb.addEventListener('change', function() {
+            var code = this.dataset.code;
+            if (this.checked && dependencies[code]) {
+                var depCb = document.querySelector('.perm-check[data-code="' + dependencies[code] + '"]');
+                if (depCb) depCb.checked = true;
+            }
+        });
+    });
+</script>

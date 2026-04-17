@@ -1,0 +1,100 @@
+﻿@model List<RentACar.Entities.ContractDocument>
+@inject IPermissionService PermissionService
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Sözleşmeler";
+    var p = await PermissionService.GetCurrentUserPermissionsAsync();
+}
+<section class="content-header">
+    <h1><i class="fa fa-file-text"></i> Sözleşmeler</h1>
+</section>
+<section class="content">
+    <div class="box box-primary">
+        <div class="box-header with-border">
+            <h3 class="box-title">Sözleşme Listesi</h3>
+            @if (p.Contains("Contracts.Manage") || User.IsInRole("Admin"))
+            {
+                <a href="/Contracts/Create" class="btn btn-success btn-sm pull-right">
+                    <i class="fa fa-plus"></i> Yeni Sözleşme
+                </a>
+            }
+        </div>
+        <div class="box-body">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Başlık</th>
+                        <th>Açıklama</th>
+                        <th style="width:80px;">PDF</th>
+                        <th style="width:80px;">Durum</th>
+                        <th style="width:120px;">İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var c in Model)
+                    {
+                        <tr>
+                            <td><strong>@c.Title</strong></td>
+                            <td><small class="text-muted">@c.Description</small></td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(c.PdfUrl))
+                                {
+                                    <a href="@c.PdfUrl" target="_blank" class="btn btn-xs btn-info">
+                                        <i class="fa fa-file-pdf-o"></i> PDF
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">—</span>
+                                }
+                            </td>
+                            <td>
+                                @if (p.Contains("Contracts.Manage") || User.IsInRole("Admin"))
+                                {
+                                    <button onclick="toggleContract(@c.ContractId, this)"
+                                            class="btn btn-xs @(c.IsActive ? "btn-success" : "btn-default")">
+                                        @(c.IsActive ? "Aktif" : "Pasif")
+                                    </button>
+                                }
+                                else
+                                {
+                                    <span class="label @(c.IsActive ? "label-success" : "label-default")">
+                                        @(c.IsActive ? "Aktif" : "Pasif")
+                                    </span>
+                                }
+                            </td>
+                            <td>
+                                @if (p.Contains("Contracts.Manage") || User.IsInRole("Admin"))
+                                {
+                                    <a href="/Contracts/Edit/@c.ContractId" class="btn btn-warning btn-xs">
+                                        <i class="fa fa-edit"></i>
+                                    </a>
+                                }
+                                @if (p.Contains("Contracts.Delete") || User.IsInRole("Admin"))
+                                {
+                                    <form method="post" action="/Contracts/Delete/@c.ContractId"
+                                          style="display:inline;"
+                                          onsubmit="return confirm('Bu sözleşmeyi silmek istediğinize emin misiniz?')">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-danger btn-xs">
+                                            <i class="fa fa-trash"></i>
+                                        </button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+<script>
+    function toggleContract(id, btn) {
+        $.post('/Contracts/ToggleStatus', { id: id }, function() {
+            var isActive = $(btn).hasClass('btn-success');
+            $(btn).toggleClass('btn-success btn-default');
+            $(btn).text(isActive ? 'Pasif' : 'Aktif');
+        });
+    }
+</script>

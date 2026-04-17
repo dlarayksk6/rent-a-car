@@ -1,0 +1,199 @@
+﻿@model RentACar.DTOs.Car.CarListDto
+@inject RentACar.Business.Abstract.IPermissionService PermissionService
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = $"{Model.Brand} {Model.Model} - Takvim";
+    var reservations = Model.Reservations ?? new List<RentACar.DTOs.Reservation.ReservationListDto>();
+    var calPerms = await PermissionService.GetCurrentUserPermissionsAsync();
+}
+
+<section class="content-header">
+    <h1>
+        @Model.Brand @Model.Model
+        <small>Rezervasyon Takvimi</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="/Reservations"><i class="fa fa-book"></i> Rezervasyonlar</a></li>
+        <li class="active">Takvim</li>
+    </ol>
+</section>
+
+<section class="content">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="box box-primary">
+                <div class="box-body box-profile">
+                    <img src="@(string.IsNullOrEmpty(Model.ImageUrl) ? "/images/default-car.png" : Model.ImageUrl)"
+                         class="img-responsive"
+                         style="max-height: 200px; width: 100%; object-fit: cover; border-radius: 8px;" />
+                    <h3 class="profile-username text-center" style="margin-top: 15px;">
+                        @Model.Brand @Model.Model
+                    </h3>
+                    <p class="text-muted text-center">@Model.PlateNumber</p>
+                    <ul class="list-group list-group-unbordered">
+                        <li class="list-group-item">
+                            <b>Kategori</b> <a class="pull-right">@Model.Category Sınıfı</a>
+                        </li>
+                        <li class="list-group-item">
+                            <b>Günlük Fiyat</b>
+                            <a class="pull-right text-success">
+                                <strong>@Model.DailyPrice.ToString("N0") ₺</strong>
+                            </a>
+                        </li>
+                        <li class="list-group-item">
+                            <b>Durum</b>
+                            <a class="pull-right">
+                                <span class="label @(Model.Status ? "label-success" : "label-danger")">
+                                    @(Model.Status ? "Uygun" : "Rezerve")
+                                </span>
+                            </a>
+                        </li>
+                    </ul>
+
+                    @if (calPerms.Contains("Reservations.Manage") || User.IsInRole("Admin"))
+                    {
+                        <a href="/Dashboard/BlockDates?carId=@Model.CarId" class="btn btn-danger btn-block">
+                            <i class="fa fa-ban"></i> Tarih Bloke Et
+                        </a>
+                    }
+
+                    <a href="/Reservations" class="btn btn-default btn-block">
+                        <i class="fa fa-arrow-left"></i> Geri Dön
+                    </a>
+                </div>
+            </div>
+
+            <div class="box box-info">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Renk Açıklamaları</h3>
+                </div>
+                <div class="box-body">
+                    <p><span class="label label-success">■</span> Onaylı</p>
+                    <p><span class="label label-warning">■</span> Beklemede</p>
+                    <p><span class="label label-danger">■</span> Admin Bloke</p>
+                    <p><span class="label label-default">■</span> İptal</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Rezervasyon Takvimi</h3>
+                </div>
+                <div class="box-body">
+                    <div id="calendar" style="width:100%; height:600px;"></div>
+                </div>
+            </div>
+
+            <div class="box box-success">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Mevcut Rezervasyonlar</h3>
+                </div>
+                <div class="box-body">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Müşteri</th>
+                                <th>Tarih</th>
+                                <th>Tutar</th>
+                                <th>Durum</th>
+                                <th>İşlem</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (reservations.Any())
+                            {
+                                @foreach (var res in reservations.OrderBy(r => r.StartDate))
+                                {
+                                    var statusBadge = res.Status == "Onaylı" ? "success" :
+                                    res.Status == "Beklemede" ? "warning" :
+                                    res.Status == "Blokeli" ? "danger" : "default";
+                                    <tr>
+                                        <td>
+                                            @if (res.IsAdminBlocked)
+                                            {
+                                                <strong>🔒 Admin Bloke</strong>
+                                            }
+                                            else
+                                            {
+                                                <strong>@res.FullName</strong>
+                                                <br>
+                                                <small>@res.PhoneNumber</small>
+                                            }
+                                        </td>
+                                        <td>
+                                            @res.StartDate.ToString("dd.MM.yyyy") - @res.EndDate.ToString("dd.MM.yyyy")<br>
+                                            <small>(@((res.EndDate - res.StartDate).Days + 1) gün)</small>
+                                        </td>
+                                        <td><strong>@res.TotalPrice.ToString("N0") ₺</strong></td>
+                                        <td><span class="label label-@statusBadge">@res.Status</span></td>
+                                        <td>
+                                            <a href="@Url.Action("Details", new { id = res.ReservationId })"
+                                               class="btn btn-info btn-xs">
+                                                <i class="fa fa-eye"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="5" class="text-center">Henüz rezervasyon yok.</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        var events = [
+            @foreach (var r in reservations)
+            {
+                    var color = r.IsAdminBlocked ? "#c0392b" :
+                                            r.Status == "Onaylı" ? "#27ae60" :
+                                            r.Status == "Beklemede" ? "#f1c40f" : "#95a5a6";
+                    <text>{
+                        title: '@(r.IsAdminBlocked ? "🔒 Blokeli" : r.FullName)',
+                        start: '@r.StartDate.ToString("yyyy-MM-dd")',
+                        end: '@r.EndDate.AddDays(1).ToString("yyyy-MM-dd")',
+                        color: '@color',
+                        extendedProps: {
+                            reservationId: @r.ReservationId,
+                            status: '@r.Status',
+                            totalPrice: '@r.TotalPrice.ToString("N0")'
+                        }
+                    },</text>
+            }
+        ];
+
+        $(document).ready(function () {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                locale: 'tr',
+                height: 600,
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,listMonth'
+                },
+                events: events,
+                eventClick: function (info) {
+                    var resId = info.event.extendedProps.reservationId;
+                    if (resId) {
+                        window.location.href = '@Url.Action("Details")' + '?id=' + resId;
+                    }
+                }
+            });
+            calendar.render();
+        });
+    </script>
+}
